@@ -1,6 +1,16 @@
 {
-  "generatedAt": "2026-06-28T13:51:34.900Z",
+  "generatedAt": "2026-06-28T13:58:05.959Z",
   "publications": [
+    {
+      "id": "dblp-conf/um/DibenedettoLPL26",
+      "title": "Evaluating Generative Text-to-Motion for Occupational Wellbeing Recommender Systems.",
+      "authors": "Gaetano Dibenedetto, Stefano Labianca, Marco Polignano, Pasquale Lops",
+      "year": 2026,
+      "journal": "UMAP Workshops",
+      "pdfUrl": "https://ceur-ws.org/Vol-4206/llm4wellrec-2.pdf",
+      "abstract": "",
+      "source": "dblp"
+    },
     {
       "id": "dblp-conf/evalita/PorcelliGFCG26",
       "title": "FFT-UniBa at Cruciverb-IT: Special Length Tokens and CSP for Italian Crossword Solving.",

@@ -92,6 +92,16 @@ const readGoogleScholarSnapshot = async () => {
   return Array.isArray(parsed) ? parsed : parsed.publications || [];
 };
 
+const readPreviousSnapshot = async () => {
+  if (!existsSync(publicationsPath)) {
+    return [];
+  }
+
+  const raw = await readFile(publicationsPath, 'utf8');
+  const parsed = JSON.parse(raw) as { publications?: Paper[] } | Paper[];
+  return Array.isArray(parsed) ? parsed : parsed.publications || [];
+};
+
 const main = async () => {
   const dblpPublications: Paper[] = [];
 
@@ -103,8 +113,9 @@ const main = async () => {
     }
   }
 
+  const previousPublications = await readPreviousSnapshot();
   const googleScholarPublications = await readGoogleScholarSnapshot();
-  const publications = dedupePapers([...dblpPublications, ...googleScholarPublications])
+  const publications = dedupePapers([...previousPublications, ...dblpPublications, ...googleScholarPublications])
     .sort((a, b) => b.year - a.year || a.title.localeCompare(b.title));
 
   const snapshot: PublicationSnapshot = {
