@@ -208,14 +208,14 @@ export default function App() {
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white tracking-tight">
               Members
             </h2>
-            <div className="max-w-md mx-auto pt-4">
+            <div className="max-w-2xl mx-auto pt-4">
               <input
                 id="member-filter-input"
                 type="text"
                 placeholder="Filter members by name or research tag..."
                 value={memberSearchQuery}
                 onChange={(e) => setMemberSearchQuery(e.target.value)}
-                className="w-full bg-white dark:bg-gray-900 border border-pink-100 dark:border-pink-950/40 rounded-xl py-2 px-4 text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full bg-white dark:bg-gray-900 border border-pink-100 dark:border-pink-950/40 rounded-2xl py-3.5 px-5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
             </div>
           </div>

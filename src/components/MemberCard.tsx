@@ -1,6 +1,6 @@
 import React from 'react';
 import { Member } from '../types';
-import { Github, Mail, BookOpen, Award } from 'lucide-react';
+import { Github, Mail, BookOpen } from 'lucide-react';
 
 interface MemberCardProps {
   key?: string;
@@ -16,7 +16,7 @@ export default function MemberCard({ member, onSelectMember }: MemberCardProps) 
     >
       <div className="space-y-4">
         {/* Profile Header */}
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
           <div className="space-y-1">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-tight group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
               {member.name}
@@ -24,9 +24,6 @@ export default function MemberCard({ member, onSelectMember }: MemberCardProps) 
             <p className="text-xs font-medium text-pink-600 dark:text-pink-400">
               {member.role}
             </p>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-500 shrink-0">
-            <Award className="w-4 h-4" />
           </div>
         </div>
 
