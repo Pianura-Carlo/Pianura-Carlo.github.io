@@ -1,4 +1,4 @@
-import { Member, Paper } from './types';
+import { Member } from './types';
 
 export const MEMBERS: Member[] = [
   {
@@ -6,7 +6,6 @@ export const MEMBERS: Member[] = [
     name: 'Davide Cirilli',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac ligula vel diam molestie vehicula non in tellus. Curabitur sed nisl eu lectus convallis feugiat id sed erat. Aliquam lorem ante, interdum vitae pretium non, eleifend sed tellus.',
-    email: 'd.cirilli@studenti.uniba.it',
     github: 'davidecirilli',
     researchInterests: ['Deep Learning', 'Computer Vision', 'Reinforcement Learning', 'Neural Architectures'],
   },
@@ -15,8 +14,8 @@ export const MEMBERS: Member[] = [
     name: 'Mattia Curri',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pretium pretium tempor. Ut eget imperdiet neque. In sit amet imperdiet ante. Sed vel varius nulla. Duis interdum luctus nisl, eu cursus mi scelerisque rhoncus.',
-    email: 'm.curri@studenti.uniba.it',
     github: 'mattiacurri',
+    dblpPid: '433/5477',
     researchInterests: ['Big Data Pipelines', 'Data Mining', 'Statistical Modeling', 'Graph Databases'],
   },
   {
@@ -24,7 +23,6 @@ export const MEMBERS: Member[] = [
     name: 'Pierluigi De Palo',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sit amet eleifend sem. Curabitur vel tristique nisl. Mauris ac scelerisque lorem. Sed volutpat nulla id risus pellentesque, vel congue felis elementum.',
-    email: 'p.depalo@studenti.uniba.it',
     github: 'pierluigidepalo',
     researchInterests: ['Human-Computer Interaction', 'Data Visualization', 'UX Design', 'Front-End Architectures'],
   },
@@ -33,8 +31,8 @@ export const MEMBERS: Member[] = [
     name: 'Filippo Di Gravina',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque in ipsum id orci porta dapibus. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Sed porttitor lectus nibh. Praesent sapien massa, convallis a pellentesque nec.',
-    email: 'f.digravina@studenti.uniba.it',
     github: 'filippodigravina',
+    dblpPid: '433/5354',
     researchInterests: ['Formal Verification', 'Model Checking', 'Compiler Construction', 'Static Analysis'],
   },
   {
@@ -42,8 +40,8 @@ export const MEMBERS: Member[] = [
     name: 'Francesco Damiano Di Gregorio',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet quam id dui posuere blandit. Proin eget tortor risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque.',
-    email: 'f.digregorio@studenti.uniba.it',
     github: 'fdgregorio',
+    dblpPid: '433/5300',
     researchInterests: ['Quantum Computing', 'Quantum Algorithms', 'Complexity Theory', 'High-Performance Algorithms'],
   },
   {
@@ -51,8 +49,8 @@ export const MEMBERS: Member[] = [
     name: 'Emanuele Fontana',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non nulla ut libero vulputate elementum. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Nulla quis lorem ut libero malesuada feugiat.',
-    email: 'e.fontana@studenti.uniba.it',
     github: 'emanuelefontana',
+    dblpPid: '407/3984',
     researchInterests: ['Distributed Systems', 'Cloud Computing', 'Blockchain', 'Network Protocols'],
   },
   {
@@ -60,7 +58,6 @@ export const MEMBERS: Member[] = [
     name: 'Stefano Labianca',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ultricies ligula sed magna dictum porta. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem.',
-    email: 's.labianca@studenti.uniba.it',
     github: 'stefanolabianca',
     researchInterests: ['Natural Language Processing', 'Text Embeddings', 'Semantic Search', 'Transformer Architectures'],
   },
@@ -69,7 +66,6 @@ export const MEMBERS: Member[] = [
     name: 'Mauro Losurdo',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Proin eget tortor risus.',
-    email: 'm.losurdo@studenti.uniba.it',
     github: 'maurolosurdo',
     researchInterests: ['Cryptography', 'Cybersecurity', 'Zero-Knowledge Proofs', 'Secure Computing'],
   },
@@ -78,8 +74,8 @@ export const MEMBERS: Member[] = [
     name: 'Michele Minervini',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi. Vivamus suscipit tortor eget felis porttitor volutpat. Curabitur aliquet quam id dui posuere blandit.',
-    email: 'm.minervini@studenti.uniba.it',
     github: 'micheleminervini',
+    googleScholarId: 'qDbMAgYAAAAJ',
     researchInterests: ['Heuristic Optimization', 'Meta-Heuristics', 'Combinatorial Search', 'Hybrid AI Systems'],
   },
   {
@@ -87,7 +83,6 @@ export const MEMBERS: Member[] = [
     name: 'Vincenzo Monopoli',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin molestie malesuada. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel.',
-    email: 'v.monopoli@studenti.uniba.it',
     github: 'vincenzomonopoli',
     researchInterests: ['Robot Perception', 'Spatial AI', 'Sensor Fusion', 'Real-time Computer Vision'],
   },
@@ -96,8 +91,8 @@ export const MEMBERS: Member[] = [
     name: 'Andrea Porcelli',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed porttitor lectus nibh. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.',
-    email: 'a.porcelli@studenti.uniba.it',
     github: 'andreaporcelli',
+    dblpPid: '433/5376',
     researchInterests: ['Algorithm Design', 'Graph Theory', 'Competitive Programming', 'Discrete Mathematics'],
   },
   {
@@ -105,55 +100,7 @@ export const MEMBERS: Member[] = [
     name: 'Fabio Zippo',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Pellentesque in ipsum id orci porta dapibus.',
-    email: 'f.zippo@studenti.uniba.it',
     github: 'fabiozippo',
     researchInterests: ['Systems Programming', 'Low-level Optimization', 'Competitive Programming', 'C++ Design'],
-  },
-];
-
-export const CURATED_PAPERS: Paper[] = [
-  {
-    id: 'paper-1',
-    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    authors: 'Fabio Zippo, Stefano Labianca, Michele Minervini, Andrea Porcelli',
-    year: 2025,
-    journal: 'Lorem Ipsum Journal',
-    doi: '10.1007/lorem.ipsum.dolor.sit.amet',
-    pdfUrl: 'https://example.com/lorem-ipsum-1.pdf',
-    abstract: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac ligula vel diam molestie vehicula non in tellus. Curabitur sed nisl eu lectus convallis feugiat id sed erat. Aliquam lorem ante, interdum vitae pretium non, eleifend sed tellus.',
-    source: 'curated',
-  },
-  {
-    id: 'paper-2',
-    title: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua',
-    authors: 'Francesco Damiano Di Gregorio, Michele Minervini, Pierluigi De Palo',
-    year: 2025,
-    journal: 'Lorem Ipsum Journal',
-    doi: '10.1109/lorem.ipsum.tempor.incididunt',
-    pdfUrl: 'https://example.com/lorem-ipsum-2.pdf',
-    abstract: 'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    source: 'curated',
-  },
-  {
-    id: 'paper-3',
-    title: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum',
-    authors: 'Vincenzo Monopoli, Davide Cirilli, Mattia Curri',
-    year: 2024,
-    journal: 'Lorem Ipsum Journal',
-    doi: '10.1109/lorem.ipsum.duis.aute.irure',
-    pdfUrl: 'https://example.com/lorem-ipsum-3.pdf',
-    abstract: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-    source: 'curated',
-  },
-  {
-    id: 'paper-4',
-    title: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa',
-    authors: 'Emanuele Fontana, Mauro Losurdo, Filippo Di Gravina',
-    year: 2024,
-    journal: 'Lorem Ipsum Journal',
-    doi: '10.1145/lorem.ipsum.excepteur.sint',
-    pdfUrl: 'https://example.com/lorem-ipsum-4.pdf',
-    abstract: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur non nulla ut libero vulputate elementum. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus.',
-    source: 'curated',
   },
 ];

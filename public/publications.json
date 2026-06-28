@@ -1,0 +1,25 @@
+{
+  "generatedAt": "2026-06-28T13:42:38.920Z",
+  "publications": [
+    {
+      "id": "dblp-conf/evalita/PorcelliGFCG26",
+      "title": "FFT-UniBa at Cruciverb-IT: Special Length Tokens and CSP for Italian Crossword Solving.",
+      "authors": "Andrea Porcelli, Filippo Di Gravina, Emanuele Fontana, Mattia Curri, Francesco Damiano Di Gregorio",
+      "year": 2026,
+      "journal": "EVALITA",
+      "pdfUrl": "https://ceur-ws.org/Vol-4195/45.pdf",
+      "abstract": "",
+      "source": "dblp"
+    },
+    {
+      "id": "dblp-conf/um/SpilloFFMS25",
+      "title": "Training Green and Sustainable Recommendation Models: Introducing Carbon Footprint Data into Early Stopping Criteria.",
+      "authors": "Giuseppe Spillo, Allegra De Filippo, Emanuele Fontana, Michela Milano, Giovanni Semeraro",
+      "year": 2025,
+      "journal": "UMAP",
+      "pdfUrl": "https://doi.org/10.1145/3699682.3728336",
+      "abstract": "",
+      "source": "dblp"
+    }
+  ]
+}

@@ -1,3 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@800;900&family=Space+Grotesk:wght@700&family=Unbounded:wght@800;900&display=swap');
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: #fafafc;
+}
+
+.dark body {
+  background: #080a12;
+}

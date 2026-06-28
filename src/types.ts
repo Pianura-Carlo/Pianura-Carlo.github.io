@@ -6,6 +6,9 @@ export interface Member {
   email?: string;
   github?: string;
   scholar?: string;
+  dblpPid?: string;
+  orcid?: string;
+  googleScholarId?: string;
   researchInterests: string[];
   avatarUrl?: string;
 }
@@ -19,5 +22,5 @@ export interface Paper {
   doi?: string;
   pdfUrl?: string;
   abstract: string;
-  source: 'curated' | 'openalex' | 'semanticscholar';
+  source: 'dblp' | 'openalex' | 'semanticscholar';
 }

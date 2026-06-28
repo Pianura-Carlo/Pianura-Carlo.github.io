@@ -1,6 +1,6 @@
 {
   "name": "Pianura Carlo",
-  "description": "Academic portfolio and automated paper finder for Pianura Carlo, a research group of Uniba Informatics students.",
+  "description": "Academic portfolio and automated paper finder for Pianura Carlo, an independent informatics research group.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

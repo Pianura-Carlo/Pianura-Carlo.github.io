@@ -1,29 +1,43 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MEMBERS } from './data';
 import OctahedronLogo from './components/OctahedronLogo';
 import MemberCard from './components/MemberCard';
 import ResearchPortal from './components/ResearchPortal';
 import { 
-  Users, 
-  Award, 
   Sparkles, 
   BookOpen, 
-  Binary, 
   ArrowRight, 
-  ChevronRight, 
-  HelpCircle, 
-  Info,
   Terminal,
   BrainCircuit,
-  GraduationCap
+  GraduationCap,
+  Moon,
+  Sun
 } from 'lucide-react';
+
+type Theme = 'light' | 'dark';
+
+const getInitialTheme = (): Theme => {
+  const storedTheme = window.localStorage.getItem('theme');
+
+  if (storedTheme === 'light' || storedTheme === 'dark') {
+    return storedTheme;
+  }
+
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+};
 
 export default function App() {
   const [selectedMemberId, setSelectedMemberId] = useState<string | undefined>(undefined);
   const [memberSearchQuery, setMemberSearchQuery] = useState('');
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
   
   const membersSectionRef = useRef<HTMLDivElement>(null);
   const researchSectionRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    window.localStorage.setItem('theme', theme);
+  }, [theme]);
 
   // Smooth scroll helper
   const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
@@ -46,67 +60,75 @@ export default function App() {
   });
 
   return (
-    <div className="min-h-screen bg-[#fafafc] text-[#1d1d1f] font-sans antialiased selection:bg-pink-500 selection:text-white">
+    <div className="min-h-screen bg-[#fafafc] text-[#1d1d1f] dark:bg-[#080a12] dark:text-gray-100 font-sans antialiased selection:bg-pink-500 selection:text-white transition-colors duration-300">
       {/* Sub navigation bar - Frosted Rose Glass */}
-      <header id="sub-nav-frosted" className="sticky top-0 w-full h-[52px] bg-white/70 backdrop-blur-md border-b border-pink-100/50 flex items-center justify-between px-6 md:px-12 z-40">
-        <div className="flex items-center gap-2">
+      <header id="sub-nav-frosted" className="sticky top-0 w-full min-h-[52px] bg-white/70 dark:bg-gray-950/70 backdrop-blur-md border-b border-pink-100/50 dark:border-pink-950/40 flex items-center justify-between gap-3 px-4 sm:px-6 md:px-12 py-2 z-40 transition-colors duration-300">
+        <div className="flex items-center gap-2 shrink-0">
           {/* Faux tiny logo wireframe */}
-          <span className="text-pink-600 font-bold tracking-tight text-lg">Pianura Carlo</span>
-        </div>
-        <div className="flex items-center gap-6">
-          <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} 
-            className="text-xs font-semibold text-gray-500 hover:text-pink-600 transition-colors cursor-pointer"
+          <button
+            type="button"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="text-pink-600 dark:text-pink-400 font-bold tracking-tight text-base sm:text-lg cursor-pointer"
           >
-            Showcase
+            Pianura Carlo
           </button>
+        </div>
+        <div className="flex items-center justify-end gap-2 sm:gap-4 md:gap-6 min-w-0">
           <button 
             onClick={() => scrollTo(membersSectionRef)} 
-            className="text-xs font-semibold text-gray-500 hover:text-pink-600 transition-colors cursor-pointer"
+            className="hidden sm:inline-flex text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors cursor-pointer whitespace-nowrap"
           >
             About Us
           </button>
           <button 
             onClick={() => scrollTo(researchSectionRef)} 
-            className="text-xs font-semibold text-gray-500 hover:text-pink-600 transition-colors cursor-pointer"
+            className="hidden sm:inline-flex text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors cursor-pointer whitespace-nowrap"
           >
-            Research Finder
+            Publications
           </button>
           <button 
             onClick={() => {
               setSelectedMemberId('all');
               scrollTo(researchSectionRef);
             }} 
-            className="bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-all transform active:scale-95 cursor-pointer shadow-sm shadow-pink-500/15"
+            className="bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-all transform active:scale-95 cursor-pointer shadow-sm shadow-pink-500/15 whitespace-nowrap"
           >
-            Find Papers
+            Publications
+          </button>
+          <button
+            type="button"
+            onClick={() => setTheme((currentTheme) => currentTheme === 'dark' ? 'light' : 'dark')}
+            className="w-8 h-8 rounded-full border border-pink-100 dark:border-pink-900/60 bg-white/80 dark:bg-gray-900 text-pink-600 dark:text-pink-300 hover:bg-pink-50 dark:hover:bg-pink-950/40 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
         </div>
       </header>
 
       {/* Hero Block Section - Apple-Style Light Canvas */}
-      <section className="relative w-full overflow-hidden bg-gradient-to-b from-white via-white to-pink-50/10 py-16 md:py-24 border-b border-pink-50/50">
+      <section className="relative w-full overflow-hidden bg-gradient-to-b from-white via-white to-pink-50/10 dark:from-gray-950 dark:via-[#0b0d18] dark:to-pink-950/10 py-16 md:py-24 border-b border-pink-50/50 dark:border-pink-950/30 transition-colors duration-300">
         <div className="max-w-4xl mx-auto px-6 text-center space-y-8">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-pink-50 border border-pink-100 rounded-full px-4 py-1 animate-fade-in">
+          <div className="inline-flex items-center gap-2 bg-pink-50 dark:bg-pink-950/30 border border-pink-100 dark:border-pink-900/50 rounded-full px-4 py-1 animate-fade-in">
             <Sparkles className="w-3.5 h-3.5 text-pink-600" />
-            <span className="text-xs font-bold tracking-wider text-pink-600 uppercase">Uniba Informatics Research Circle</span>
+            <span className="text-xs font-bold tracking-wider text-pink-600 uppercase">Independent Informatics Research Circle</span>
           </div>
 
           {/* Headline Display */}
           <div className="space-y-4">
-            <h1 className="text-5xl md:text-6xl font-semibold tracking-tight leading-tight text-gray-900">
+            <h1 className="text-5xl md:text-6xl font-semibold tracking-tight leading-tight text-gray-900 dark:text-white">
               Pianura Carlo
             </h1>
-            <p className="text-xl md:text-2xl font-light text-pink-600/90 tracking-wide max-w-2xl mx-auto">
+            <p className="text-xl md:text-2xl font-light text-pink-600/90 dark:text-pink-300 tracking-wide max-w-3xl lg:max-w-none mx-auto lg:whitespace-nowrap">
               Algorithmic boundaries. Quantum computing. Meta-heuristic optimization.
             </p>
           </div>
 
           {/* Lead body description */}
-          <p className="text-base md:text-lg text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
-            We are a team of informatics researchers and competitive programmers from the 
-            <span className="font-medium text-gray-900"> University of Bari (Uniba)</span>. Built for academic exploration, we combine structural computer science, algorithmic optimization, and software design.
+          <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto font-light leading-relaxed">
+            We are a team of informatics researchers and competitive programmers. Built for academic exploration, we combine structural computer science, algorithmic optimization, and software design.
           </p>
 
           {/* Action pills */}
@@ -123,9 +145,9 @@ export default function App() {
                 setSelectedMemberId('all');
                 scrollTo(researchSectionRef);
               }}
-              className="bg-white hover:bg-pink-50 text-pink-600 border border-pink-200 rounded-full py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 cursor-pointer"
+              className="bg-white dark:bg-gray-900 hover:bg-pink-50 dark:hover:bg-pink-950/40 text-pink-600 dark:text-pink-300 border border-pink-200 dark:border-pink-900/60 rounded-full py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 cursor-pointer"
             >
-              Search Publications
+              View Publications
             </button>
           </div>
 
@@ -140,39 +162,39 @@ export default function App() {
       </section>
 
       {/* Grid Highlights Cards Block - Apple Configurator Style */}
-      <section className="py-16 bg-white border-b border-pink-50/50">
+      <section className="py-16 bg-white dark:bg-[#0b0d18] border-b border-pink-50/50 dark:border-pink-950/30 transition-colors duration-300">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Focus 1 */}
-            <div className="bg-[#fafafc] border border-pink-100/50 rounded-2xl p-6 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center text-pink-600">
+            <div className="bg-[#fafafc] dark:bg-gray-900 border border-pink-100/50 dark:border-pink-950/40 rounded-2xl p-6 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-600 dark:text-pink-300">
                 <BrainCircuit className="w-5 h-5" />
               </div>
-              <h3 className="text-md font-semibold text-gray-900">Theoretical Foundations</h3>
-              <p className="text-sm text-gray-600 font-light leading-relaxed">
+              <h3 className="text-md font-semibold text-gray-900 dark:text-white">Theoretical Foundations</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-light leading-relaxed">
                 Exploring NP-hard problems, complexity classes, quantum error correction protocols, and graph algorithms with rigorous mathematical analysis.
               </p>
             </div>
 
             {/* Focus 2 */}
-            <div className="bg-[#fafafc] border border-pink-100/50 rounded-2xl p-6 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center text-pink-600">
+            <div className="bg-[#fafafc] dark:bg-gray-900 border border-pink-100/50 dark:border-pink-950/40 rounded-2xl p-6 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-600 dark:text-pink-300">
                 <Terminal className="w-5 h-5" />
               </div>
-              <h3 className="text-md font-semibold text-gray-900">Competitive Programming</h3>
-              <p className="text-sm text-gray-600 font-light leading-relaxed">
+              <h3 className="text-md font-semibold text-gray-900 dark:text-white">Competitive Programming</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-light leading-relaxed">
                 Applying advanced dynamic programming, seg-trees, and graph-flows to elite competitions like the Italian Competitive Programming Contest (ITACPC).
               </p>
             </div>
 
             {/* Focus 3 */}
-            <div className="bg-[#fafafc] border border-pink-100/50 rounded-2xl p-6 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-pink-50 flex items-center justify-center text-pink-600">
+            <div className="bg-[#fafafc] dark:bg-gray-900 border border-pink-100/50 dark:border-pink-950/40 rounded-2xl p-6 space-y-3">
+              <div className="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-600 dark:text-pink-300">
                 <GraduationCap className="w-5 h-5" />
               </div>
-              <h3 className="text-md font-semibold text-gray-900">Uniba Academic Merits</h3>
-              <p className="text-sm text-gray-600 font-light leading-relaxed">
-                Affiliated with the Università degli Studi di Bari, collaborating with research laboratories to develop production-grade solutions.
+              <h3 className="text-md font-semibold text-gray-900 dark:text-white">Research Practice</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 font-light leading-relaxed">
+                Collaborating across research areas to develop rigorous, production-grade solutions for modern computational challenges.
               </p>
             </div>
           </div>
@@ -183,18 +205,15 @@ export default function App() {
       <section 
         id="about-us-section" 
         ref={membersSectionRef} 
-        className="py-16 md:py-24 bg-[#fafafc] border-b border-pink-50/50"
+        className="py-16 md:py-24 bg-[#fafafc] dark:bg-[#080a12] border-b border-pink-50/50 dark:border-pink-950/30 transition-colors duration-300"
       >
         <div className="max-w-6xl mx-auto px-6 space-y-12">
           
           {/* Section Header */}
           <div className="text-center space-y-4">
-            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight">
-              Group Directory
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white tracking-tight">
+              Members
             </h2>
-            <p className="text-sm text-pink-600 font-semibold uppercase tracking-wider">
-              Active Researchers • Sorted Alphabetically
-            </p>
             <div className="max-w-md mx-auto pt-4">
               <input
                 id="member-filter-input"
@@ -202,7 +221,7 @@ export default function App() {
                 placeholder="Filter members by name or research tag..."
                 value={memberSearchQuery}
                 onChange={(e) => setMemberSearchQuery(e.target.value)}
-                className="w-full bg-white border border-pink-100 rounded-xl py-2 px-4 text-xs focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full bg-white dark:bg-gray-900 border border-pink-100 dark:border-pink-950/40 rounded-xl py-2 px-4 text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
             </div>
           </div>
@@ -218,36 +237,36 @@ export default function App() {
                 />
               ))
             ) : (
-              <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-pink-200">
-                <p className="text-sm text-gray-500">No members match your filter criteria.</p>
+              <div className="col-span-full text-center py-12 bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-pink-200 dark:border-pink-900/40">
+                <p className="text-sm text-gray-500 dark:text-gray-400">No members match your filter criteria.</p>
               </div>
             )}
           </div>
         </div>
       </section>
 
-      {/* Publications / Live Research Portal - Pink and White Theme */}
+      {/* Publications Section */}
       <section 
         id="research-section" 
         ref={researchSectionRef} 
-        className="py-16 md:py-24 bg-white"
+        className="py-16 md:py-24 bg-white dark:bg-[#0b0d18] transition-colors duration-300"
       >
         <div className="max-w-6xl mx-auto px-6 space-y-12">
           
           {/* Section Header */}
           <div className="space-y-4 max-w-3xl">
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-pink-600 bg-pink-50 px-2.5 py-1 rounded-full">
-              <BookOpen className="w-3.5 h-3.5" /> Automated Crawler
+            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-pink-600 dark:text-pink-300 bg-pink-50 dark:bg-pink-950/30 px-2.5 py-1 rounded-full">
+              <BookOpen className="w-3.5 h-3.5" /> Publications Index
             </div>
-            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 tracking-tight">
-              Publications Finder
+            <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white tracking-tight">
+              Publications
             </h2>
-            <p className="text-sm md:text-md text-gray-600 font-light leading-relaxed">
-              Find academic work authored by our team. Our crawler dynamically crawls international, open-access scholarly databases (<span className="font-semibold text-pink-600">OpenAlex</span> and <span className="font-semibold text-pink-600">Semantic Scholar</span>) to find, validate, and reconstruct abstracts for peer-reviewed papers written by any member of Pianura Carlo.
+            <p className="text-sm md:text-md text-gray-600 dark:text-gray-300 font-light leading-relaxed">
+              Academic work authored by the group, generated from stable publication identifiers and rendered from a static data file.
             </p>
           </div>
 
-          {/* Automated Research Portal Component */}
+          {/* Publications List Component */}
           <ResearchPortal selectedMemberId={selectedMemberId} />
 
         </div>
@@ -259,7 +278,7 @@ export default function App() {
         <div className="max-w-3xl mx-auto px-6 space-y-4">
           <BrainCircuit className="w-8 h-8 mx-auto text-pink-200 animate-pulse" />
           <h2 className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed">
-            "We compile intellectual efforts to push standard computational barriers. Informatics at Uniba is not just a study—it is an infinite playground for research and performance."
+            "We compile intellectual efforts to push standard computational barriers. Informatics is an infinite playground for research and performance."
           </h2>
           <p className="text-xs uppercase tracking-widest text-pink-200 font-mono">
             — PIANURA CARLO SYNDICATE
@@ -268,23 +287,23 @@ export default function App() {
       </section>
 
       {/* Apple-Style Parchment/Rose Footer */}
-      <footer id="footer" className="bg-[#f5f5f7] border-t border-pink-100/30 text-gray-500 py-12 px-6 md:px-12">
+      <footer id="footer" className="bg-[#f5f5f7] dark:bg-gray-950 border-t border-pink-100/30 dark:border-pink-950/40 text-gray-500 dark:text-gray-400 py-12 px-6 md:px-12 transition-colors duration-300">
         <div className="max-w-3xl mx-auto space-y-6 text-center">
           <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-gray-900 uppercase tracking-wider">Group Mission</h4>
-            <p className="text-xs text-gray-500 font-light leading-relaxed max-w-xl mx-auto">
+            <h4 className="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Group Mission</h4>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-light leading-relaxed max-w-xl mx-auto">
               Pianura Carlo is an independent computer science research synergy. We research modern algorithms, system constraints, formal verifications, and competitive optimizations.
             </p>
           </div>
 
-          <div className="border-t border-gray-300/40 pt-6 text-[10px] text-gray-400 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="border-t border-gray-300/40 dark:border-gray-800 pt-6 text-[10px] text-gray-400 dark:text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div>
               <p>© 2026 Pianura Carlo. All rights reserved. Code licensed under Apache-2.0.</p>
             </div>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap justify-center gap-4">
               <span className="hover:text-pink-600 transition-colors cursor-default">Privacy Policy</span>
               <span className="hover:text-pink-600 transition-colors cursor-default">Terms of Study</span>
-              <span className="hover:text-pink-600 transition-colors cursor-default">Bari, Italy</span>
+              <span className="hover:text-pink-600 transition-colors cursor-default">Independent Research Group</span>
             </div>
           </div>
         </div>
