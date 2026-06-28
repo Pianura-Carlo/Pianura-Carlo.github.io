@@ -81,12 +81,6 @@ export default function App() {
             About Us
           </button>
           <button 
-            onClick={() => scrollTo(researchSectionRef)} 
-            className="hidden sm:inline-flex text-xs font-semibold text-gray-500 dark:text-gray-400 hover:text-pink-600 dark:hover:text-pink-400 transition-colors cursor-pointer whitespace-nowrap"
-          >
-            Publications
-          </button>
-          <button 
             onClick={() => {
               setSelectedMemberId('all');
               scrollTo(researchSectionRef);
