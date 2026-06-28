@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Paper } from '../types';
 import { MEMBERS } from '../data';
-import { RotateCw, AlertCircle, FileText, ExternalLink, Calendar, BookOpen, Sparkles } from 'lucide-react';
+import { RotateCw, AlertCircle, FileText, ExternalLink, Calendar, BookOpen, Sparkles, X } from 'lucide-react';
 import { isLikelySameAuthor } from '../paperCrawler';
 
 interface ResearchPortalProps {
   selectedMemberId?: string;
+  onClearMemberFilter: () => void;
 }
 
 interface PublicationSnapshot {
@@ -13,7 +14,7 @@ interface PublicationSnapshot {
   publications: Paper[];
 }
 
-export default function ResearchPortal({ selectedMemberId }: ResearchPortalProps) {
+export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }: ResearchPortalProps) {
   const [papers, setPapers] = useState<Paper[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,12 +86,24 @@ export default function ResearchPortal({ selectedMemberId }: ResearchPortalProps
           <Sparkles className="w-4 h-4" />
           {selectedMember ? `${selectedMember.name} Publications` : 'Publications'} ({visiblePapers.length})
         </div>
-        {isLoading && (
-          <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
-            <RotateCw className="w-3.5 h-3.5 animate-spin text-pink-400" />
-            Loading publications
-          </div>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          {selectedMember && (
+            <button
+              type="button"
+              onClick={onClearMemberFilter}
+              className="inline-flex items-center justify-center gap-1.5 rounded-full border border-pink-100 dark:border-pink-900/50 bg-white dark:bg-gray-900 px-3 py-1.5 text-xs font-semibold text-gray-600 dark:text-gray-300 transition-colors hover:border-pink-300 hover:bg-pink-50 hover:text-pink-700 dark:hover:border-pink-800 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+            >
+              <X className="w-3.5 h-3.5" />
+              Clear Filter
+            </button>
+          )}
+          {isLoading && (
+            <div className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-2">
+              <RotateCw className="w-3.5 h-3.5 animate-spin text-pink-400" />
+              Loading publications
+            </div>
+          )}
+        </div>
       </div>
 
       {/* error state */}

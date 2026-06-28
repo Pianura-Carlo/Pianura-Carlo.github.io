@@ -52,6 +52,10 @@ export default function App() {
     }, 100);
   };
 
+  const handleClearMemberPaperFilter = () => {
+    setSelectedMemberId('all');
+  };
+
   // Filter members based on search box (by name or interests)
   const filteredMembers = MEMBERS.filter(member => {
     const query = memberSearchQuery.toLowerCase();
@@ -261,7 +265,7 @@ export default function App() {
           </div>
 
           {/* Publications List Component */}
-          <ResearchPortal selectedMemberId={selectedMemberId} />
+          <ResearchPortal selectedMemberId={selectedMemberId} onClearMemberFilter={handleClearMemberPaperFilter} />
 
         </div>
       </section>
