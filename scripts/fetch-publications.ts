@@ -65,7 +65,7 @@ const parseDblpPersonXml = (xml: string, member: (typeof MEMBERS)[number]) => {
       .join(', ');
     const title = readTag(record, 'title') || 'Untitled Work';
     const year = Number(readTag(record, 'year')) || new Date().getFullYear();
-    const journal = readTag(record, 'booktitle') || readTag(record, 'journal') || readTag(record, 'publisher') || 'DBLP';
+    const journal = readTag(record, 'booktitle') || readTag(record, 'journal') || readTag(record, 'publisher') || 'Preprint';
     const pdfUrl = readTag(record, 'ee') || `https://dblp.org/rec/${key}`;
 
     return {
@@ -108,7 +108,7 @@ const parseGoogleScholarProfileHtml = (html: string, member: (typeof MEMBERS)[nu
     const metadata = Array.from(row.matchAll(/<div class="gs_gray">([\s\S]*?)<\/div>/g))
       .map((match) => stripTags(match[1]));
     const authors = metadata[0] || member.name;
-    const venue = metadata[1]?.replace(/,\s*\d{4}$/, '').trim() || 'Google Scholar';
+    const venue = metadata[1]?.replace(/,\s*\d{4}$/, '').trim() || 'Preprint';
     const yearMatch = row.match(/<span class="gsc_a_h gsc_a_hc gs_ibl">(\d{4})<\/span>/);
     const year = yearMatch ? Number(yearMatch[1]) : new Date().getFullYear();
     const citationId = articleHref.match(/citation_for_view=([^&"]+)/)?.[1];
