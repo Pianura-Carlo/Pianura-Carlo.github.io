@@ -11,7 +11,12 @@ import {
   BrainCircuit,
   GraduationCap,
   Moon,
-  Sun
+  Sun,
+  Github,
+  Mail,
+  ExternalLink,
+  X,
+  UserRound
 } from 'lucide-react';
 
 type Theme = 'light' | 'dark';
@@ -28,6 +33,7 @@ const getInitialTheme = (): Theme => {
 
 export default function App() {
   const [selectedMemberId, setSelectedMemberId] = useState<string | undefined>(undefined);
+  const [profileMemberId, setProfileMemberId] = useState<string | undefined>(undefined);
   const [memberSearchQuery, setMemberSearchQuery] = useState('');
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
   
@@ -52,6 +58,10 @@ export default function App() {
     }, 100);
   };
 
+  const handleViewMemberProfile = (memberId: string) => {
+    setProfileMemberId(memberId);
+  };
+
   const handleClearMemberPaperFilter = () => {
     setSelectedMemberId('all');
   };
@@ -62,6 +72,30 @@ export default function App() {
     return member.name.toLowerCase().includes(query) || 
            member.researchInterests.some(interest => interest.toLowerCase().includes(query));
   });
+
+  const profileMember = profileMemberId
+    ? MEMBERS.find((member) => member.id === profileMemberId)
+    : undefined;
+
+  useEffect(() => {
+    if (!profileMember) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setProfileMemberId(undefined);
+      }
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [profileMember]);
 
   return (
     <div className="min-h-screen bg-[#fafafc] text-[#1d1d1f] dark:bg-[#080a12] dark:text-gray-100 font-sans antialiased selection:bg-pink-500 selection:text-white transition-colors duration-300">
@@ -232,6 +266,7 @@ export default function App() {
                   key={member.id} 
                   member={member} 
                   onSelectMember={handleSelectMemberForPapers} 
+                  onViewProfile={handleViewMemberProfile}
                 />
               ))
             ) : (
@@ -240,8 +275,133 @@ export default function App() {
               </div>
             )}
           </div>
+
         </div>
       </section>
+
+      {profileMember && (
+        <div
+          className="fixed inset-0 z-50 bg-white dark:bg-gray-950"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="member-profile-title"
+        >
+          <div
+            className="relative h-screen w-full overflow-y-auto bg-white p-6 dark:bg-gray-950 md:p-12 lg:p-16 xl:p-24"
+          >
+            <button
+              type="button"
+              onClick={() => setProfileMemberId(undefined)}
+              className="fixed right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-pink-100 bg-white text-gray-500 shadow-sm transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+              aria-label="Close profile"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="grid min-h-full w-full content-center gap-10 pr-0 md:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] md:items-center md:gap-16 md:pr-8 xl:gap-24">
+              <div className="max-w-5xl space-y-8">
+                <div className="space-y-4">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-pink-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-pink-600 dark:bg-pink-950/30 dark:text-pink-300">
+                    <UserRound className="h-3.5 w-3.5" />
+                    Complete Profile
+                  </div>
+                  <div>
+                    <h3 id="member-profile-title" className="text-4xl font-semibold tracking-tight text-gray-900 dark:text-white md:text-6xl xl:text-7xl">
+                      {profileMember.name}
+                    </h3>
+                    <p className="mt-3 text-base font-medium text-pink-600 dark:text-pink-400 md:text-lg">
+                      {profileMember.role}
+                    </p>
+                  </div>
+                </div>
+
+                <p className="max-w-4xl text-lg font-light leading-relaxed text-gray-600 dark:text-gray-300 md:text-xl">
+                  {profileMember.bio}
+                </p>
+
+                <div className="space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+                    Interests
+                  </h4>
+                  <div className="flex flex-wrap gap-3">
+                    {profileMember.researchInterests.map((interest) => (
+                      <span
+                        key={interest}
+                        className="rounded-xl border border-pink-100/60 bg-pink-50/70 px-4 py-2 text-sm text-pink-700 dark:border-pink-900/40 dark:bg-pink-950/30 dark:text-pink-300 md:text-base"
+                      >
+                        {interest}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProfileMemberId(undefined);
+                    handleSelectMemberForPapers(profileMember.id);
+                  }}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-pink-600 px-5 py-4 text-base font-semibold text-white shadow-sm shadow-pink-500/15 transition-colors hover:bg-pink-700"
+                >
+                  <BookOpen className="h-4 w-4" />
+                  View Publications
+                </button>
+
+                {profileMember.email && (
+                  <a
+                    href={`mailto:${profileMember.email}`}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                  >
+                    <Mail className="h-4 w-4" />
+                    Email
+                  </a>
+                )}
+
+                {profileMember.github && (
+                  <a
+                    href={`https://github.com/${profileMember.github}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                  >
+                    <Github className="h-4 w-4" />
+                    GitHub
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
+
+                {profileMember.googleScholarId && (
+                  <a
+                    href={`https://scholar.google.com/citations?user=${profileMember.googleScholarId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                  >
+                    <GraduationCap className="h-4 w-4" />
+                    Scholar
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
+
+                {profileMember.dblpPid && (
+                  <a
+                    href={`https://dblp.org/pid/${profileMember.dblpPid}.html`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                  >
+                    <BookOpen className="h-4 w-4" />
+                    DBLP
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Publications Section */}
       <section 
@@ -270,31 +430,10 @@ export default function App() {
         </div>
       </section>
 
-      {/* Editorial Quote / Statement Block - Pink Highlight */}
-      <section className="bg-pink-600 text-white py-16 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-pink-500 via-pink-600 to-pink-700 opacity-90 -z-10" />
-        <div className="max-w-3xl mx-auto px-6 space-y-4">
-          <BrainCircuit className="w-8 h-8 mx-auto text-pink-200 animate-pulse" />
-          <h2 className="text-2xl md:text-3xl font-light tracking-wide leading-relaxed">
-            "We compile intellectual efforts to push standard computational barriers. Informatics is an infinite playground for research and performance."
-          </h2>
-          <p className="text-xs uppercase tracking-widest text-pink-200 font-mono">
-            — PIANURA CARLO SYNDICATE
-          </p>
-        </div>
-      </section>
-
       {/* Apple-Style Parchment/Rose Footer */}
       <footer id="footer" className="bg-[#f5f5f7] dark:bg-gray-950 border-t border-pink-100/30 dark:border-pink-950/40 text-gray-500 dark:text-gray-400 py-12 px-6 md:px-12 transition-colors duration-300">
         <div className="max-w-3xl mx-auto space-y-6 text-center">
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold text-gray-900 dark:text-white uppercase tracking-wider">Group Mission</h4>
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-light leading-relaxed max-w-xl mx-auto">
-              Pianura Carlo is an independent computer science research synergy. We research modern algorithms, system constraints, formal verifications, and competitive optimizations.
-            </p>
-          </div>
-
-          <div className="border-t border-gray-300/40 dark:border-gray-800 pt-6 text-[10px] text-gray-400 dark:text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="text-[10px] text-gray-400 dark:text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div>
               <p>© 2026 Pianura Carlo. All rights reserved. Code licensed under Apache-2.0.</p>
             </div>
