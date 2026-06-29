@@ -22,5 +22,5 @@ export interface Paper {
   doi?: string;
   pdfUrl?: string;
   abstract: string;
-  source: 'dblp' | 'openalex' | 'semanticscholar';
+  source: 'dblp' | 'openalex' | 'semanticscholar' | 'googlescholar';
 }

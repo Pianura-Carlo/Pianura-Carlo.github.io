@@ -1,3 +1,25 @@
 {
-  "publications": []
+  "generatedAt": "2026-06-29T09:59:16.250Z",
+  "publications": [
+    {
+      "id": "googlescholar-qDbMAgYAAAAJ:9yKSN-GCB0IC",
+      "title": "Feature representation for explainable CRISPR off-target prediction and base editing efficiency",
+      "authors": "F Hasin, M Minervini, C Mencar, G Ventrella, A Consiglio, A Orro, T Selmi",
+      "year": 2026,
+      "journal": "Frontiers in Bioinformatics 6, 1800237",
+      "pdfUrl": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=qDbMAgYAAAAJ&pagesize=100&citation_for_view=qDbMAgYAAAAJ:9yKSN-GCB0IC",
+      "abstract": "Abstract not available from Google Scholar.",
+      "source": "googlescholar"
+    },
+    {
+      "id": "googlescholar-qDbMAgYAAAAJ:d1gkVwhDpl0C",
+      "title": "Machine Learning-Based Prediction of Base Editor sgRNA fitness score",
+      "authors": "A Orro, A Consiglio, MI Curci, M Scichilone, F Hasin, M Minervini, ...",
+      "year": 2026,
+      "journal": "Google Scholar",
+      "pdfUrl": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=qDbMAgYAAAAJ&pagesize=100&citation_for_view=qDbMAgYAAAAJ:d1gkVwhDpl0C",
+      "abstract": "Abstract not available from Google Scholar.",
+      "source": "googlescholar"
+    }
+  ]
 }
