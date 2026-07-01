@@ -1,6 +1,17 @@
 {
-  "generatedAt": "2026-06-29T09:59:16.250Z",
+  "generatedAt": "2026-07-01T19:38:14.370Z",
   "publications": [
+    {
+      "id": "orcid-0009-0001-7828-0757-10-1007-978-3-032-30530-5-22",
+      "title": "A Binning-Based Approach for Intrusion Detection and Attack Classification in Internet of Medical Things Networks",
+      "authors": "Andrea Porcelli",
+      "year": 2027,
+      "journal": "book-chapter",
+      "doi": "https://doi.org/10.1007/978-3-032-30530-5_22",
+      "pdfUrl": "https://doi.org/10.1007/978-3-032-30530-5_22",
+      "abstract": "Abstract not available from ORCID.",
+      "source": "orcid"
+    },
     {
       "id": "dblp-conf/um/DibenedettoLPL26",
       "title": "Evaluating Generative Text-to-Motion for Occupational Wellbeing Recommender Systems.",
@@ -8,7 +19,7 @@
       "year": 2026,
       "journal": "UMAP Workshops",
       "pdfUrl": "https://ceur-ws.org/Vol-4206/llm4wellrec-2.pdf",
-      "abstract": "",
+      "abstract": "Abstract not available from Google Scholar.",
       "source": "dblp"
     },
     {
@@ -28,7 +39,7 @@
       "year": 2026,
       "journal": "EVALITA",
       "pdfUrl": "https://ceur-ws.org/Vol-4195/45.pdf",
-      "abstract": "",
+      "abstract": "Abstract not available from Google Scholar.",
       "source": "dblp",
       "featured": true
     },
@@ -43,14 +54,26 @@
       "source": "googlescholar"
     },
     {
+      "id": "orcid-0009-0001-7828-0757-10-1007-s10207-026-01285-3",
+      "title": "SurIoT: Automatic generation of Internet-of-Medical-Things Network Intrusion Detection and Prevention Rules",
+      "authors": "Andrea Porcelli",
+      "year": 2026,
+      "journal": "International Journal of Information Security",
+      "doi": "https://doi.org/10.1007/s10207-026-01285-3",
+      "pdfUrl": "https://doi.org/10.1007/s10207-026-01285-3",
+      "abstract": "Abstract not available from ORCID.",
+      "source": "orcid"
+    },
+    {
       "id": "dblp-conf/um/SpilloFFMS25",
       "title": "Training Green and Sustainable Recommendation Models: Introducing Carbon Footprint Data into Early Stopping Criteria.",
       "authors": "Giuseppe Spillo, Allegra De Filippo, Emanuele Fontana, Michela Milano, Giovanni Semeraro",
       "year": 2025,
       "journal": "UMAP",
       "pdfUrl": "https://doi.org/10.1145/3699682.3728336",
-      "abstract": "",
-      "source": "dblp"
+      "abstract": "Abstract not available from Google Scholar.",
+      "source": "dblp",
+      "doi": "https://doi.org/10.1145/3699682.3728336"
     }
   ]
 }

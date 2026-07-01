@@ -449,6 +449,19 @@ export default function App() {
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
                 )}
+
+                {profileMember.orcid && (
+                  <a
+                    href={`https://orcid.org/${profileMember.orcid}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                  >
+                    <UserRound className="h-4 w-4" />
+                    ORCID
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
               </div>
             </div>
           </div>

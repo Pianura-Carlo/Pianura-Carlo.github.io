@@ -1,6 +1,16 @@
 {
-  "generatedAt": "2026-06-29T09:59:16.250Z",
+  "generatedAt": "2026-07-01T19:38:14.370Z",
   "publications": [
+    {
+      "id": "googlescholar-hEsbpU4AAAAJ:u5HHmVD_uO8C",
+      "title": "Evaluating Generative Text-to-Motion for Occupational Wellbeing Recommender Systems",
+      "authors": "G Dibenedetto, S Labianca, M Polignano, P Lops",
+      "year": 2026,
+      "journal": "Preprint",
+      "pdfUrl": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=hEsbpU4AAAAJ&pagesize=100&citation_for_view=hEsbpU4AAAAJ:u5HHmVD_uO8C",
+      "abstract": "Abstract not available from Google Scholar.",
+      "source": "googlescholar"
+    },
     {
       "id": "googlescholar-qDbMAgYAAAAJ:9yKSN-GCB0IC",
       "title": "Feature representation for explainable CRISPR off-target prediction and base editing efficiency",
@@ -12,12 +22,32 @@
       "source": "googlescholar"
     },
     {
+      "id": "googlescholar-yrLYcIEAAAAJ:u5HHmVD_uO8C",
+      "title": "FFT-Uniba at Cruciverb-IT: Special length tokens and CSP for italian crossword solving",
+      "authors": "A Porcelli, F Di Gravina, E Fontana, M Curri, FD Di Gregorio",
+      "year": 2026,
+      "journal": "Proceedings of the Ninth Evaluation Campaign of Natural Language Processing …",
+      "pdfUrl": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=yrLYcIEAAAAJ&pagesize=100&citation_for_view=yrLYcIEAAAAJ:u5HHmVD_uO8C",
+      "abstract": "Abstract not available from Google Scholar.",
+      "source": "googlescholar"
+    },
+    {
       "id": "googlescholar-qDbMAgYAAAAJ:d1gkVwhDpl0C",
       "title": "Machine Learning-Based Prediction of Base Editor sgRNA fitness score",
       "authors": "A Orro, A Consiglio, MI Curci, M Scichilone, F Hasin, M Minervini, ...",
       "year": 2026,
       "journal": "Google Scholar",
       "pdfUrl": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=qDbMAgYAAAAJ&pagesize=100&citation_for_view=qDbMAgYAAAAJ:d1gkVwhDpl0C",
+      "abstract": "Abstract not available from Google Scholar.",
+      "source": "googlescholar"
+    },
+    {
+      "id": "googlescholar-YqUDOJEAAAAJ:u5HHmVD_uO8C",
+      "title": "Training green and sustainable recommendation models: introducing carbon footprint data into early stopping criteria",
+      "authors": "G Spillo, A De Filippo, E Fontana, M Milano, G Semeraro",
+      "year": 2025,
+      "journal": "Proceedings of the 33rd ACM Conference on User Modeling, Adaptation and …",
+      "pdfUrl": "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=YqUDOJEAAAAJ&pagesize=100&citation_for_view=YqUDOJEAAAAJ:u5HHmVD_uO8C",
       "abstract": "Abstract not available from Google Scholar.",
       "source": "googlescholar"
     }

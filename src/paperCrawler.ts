@@ -243,21 +243,44 @@ export const paperIdentityKey = (paper: Paper) =>
   paper.doi ? `doi:${normalizeDoi(paper.doi)}` : `title:${normalizeText(paper.title)}`;
 
 export const dedupePapers = (papers: Paper[]) => {
-  const uniquePapersMap = new Map<string, Paper>();
+  const uniquePapers: Paper[] = [];
+  const doiIndex = new Map<string, number>();
+  const titleIndex = new Map<string, number>();
 
   papers.forEach((paper) => {
-    const key = paperIdentityKey(paper);
-    const existing = uniquePapersMap.get(key);
+    const doiKey = paper.doi ? `doi:${normalizeDoi(paper.doi)}` : undefined;
+    const titleKey = `title:${normalizeText(paper.title)}`;
+    const existingIndex = doiKey !== undefined
+      ? doiIndex.get(doiKey) ?? titleIndex.get(titleKey)
+      : titleIndex.get(titleKey);
 
-    if (!existing) {
-      uniquePapersMap.set(key, paper);
+    if (existingIndex === undefined) {
+      const newIndex = uniquePapers.length;
+      uniquePapers.push(paper);
+      titleIndex.set(titleKey, newIndex);
+
+      if (doiKey) {
+        doiIndex.set(doiKey, newIndex);
+      }
       return;
     }
 
+    const existing = uniquePapers[existingIndex];
+    const mergedPaper = {
+      ...existing,
+      doi: existing.doi || paper.doi,
+      pdfUrl: existing.pdfUrl || paper.pdfUrl,
+      abstract: existing.abstract || paper.abstract,
+      journal: existing.journal || paper.journal,
+      featured: existing.featured || paper.featured,
+    };
+
+    uniquePapers[existingIndex] = mergedPaper;
+
     if (!existing.doi && paper.doi) {
-      uniquePapersMap.set(key, paper);
+      doiIndex.set(`doi:${normalizeDoi(paper.doi)}`, existingIndex);
     }
   });
 
-  return Array.from(uniquePapersMap.values());
+  return uniquePapers;
 };

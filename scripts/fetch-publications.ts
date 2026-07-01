@@ -12,12 +12,48 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const rootDir = resolve(__dirname, '..');
 const publicationsPath = resolve(rootDir, 'public/publications.json');
 const googleScholarPath = resolve(rootDir, 'public/google-scholar-publications.json');
+const orcidPath = resolve(rootDir, 'public/orcid-publications.json');
 const requestTimeoutMs = 15000;
 const execFileAsync = promisify(execFile);
 
 interface PublicationSnapshot {
   generatedAt: string;
   publications: Paper[];
+}
+
+interface OrcidValue {
+  value?: string;
+}
+
+interface OrcidExternalId {
+  'external-id-type'?: string;
+  'external-id-value'?: string;
+  'external-id-normalized'?: OrcidValue | null;
+  'external-id-url'?: OrcidValue | null;
+}
+
+interface OrcidWorkSummary {
+  'put-code'?: number;
+  title?: {
+    title?: OrcidValue | null;
+  };
+  'external-ids'?: {
+    'external-id'?: OrcidExternalId[];
+  };
+  url?: OrcidValue | null;
+  type?: string;
+  'publication-date'?: {
+    year?: OrcidValue | null;
+  };
+  'journal-title'?: OrcidValue | null;
+}
+
+interface OrcidWorkGroup {
+  'work-summary'?: OrcidWorkSummary[];
+}
+
+interface OrcidWorksResponse {
+  group?: OrcidWorkGroup[];
 }
 
 const decodeXml = (value: string) =>
@@ -38,6 +74,12 @@ const stripTags = (html: string) =>
   decodeHtml(html.replace(/<[^>]+>/g, ' '))
     .replace(/\s+/g, ' ')
     .trim();
+
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
 
 const readTag = (xml: string, tag: string) => {
   const match = xml.match(new RegExp(`<${tag}(?:\\s[^>]*)?>([\\s\\S]*?)</${tag}>`));
@@ -149,12 +191,112 @@ const fetchGoogleScholarPublications = async (member: (typeof MEMBERS)[number]) 
   return parseGoogleScholarProfileHtml(stdout, member);
 };
 
+const orcidValue = (value?: OrcidValue | string | null) => {
+  if (!value) {
+    return '';
+  }
+
+  return typeof value === 'string' ? value : value.value || '';
+};
+
+const orcidExternalIds = (work: OrcidWorkSummary) =>
+  work['external-ids']?.['external-id'] || [];
+
+const orcidDoi = (work: OrcidWorkSummary) => {
+  const externalId = orcidExternalIds(work)
+    .find((id) => id['external-id-type']?.toLowerCase() === 'doi');
+
+  const doi = orcidValue(externalId?.['external-id-normalized'])
+    || externalId?.['external-id-value']
+    || '';
+
+  if (!doi) {
+    return undefined;
+  }
+
+  return doi.startsWith('http') ? doi : `https://doi.org/${doi}`;
+};
+
+const orcidWorkUrl = (work: OrcidWorkSummary) => {
+  const doiUrl = orcidExternalIds(work)
+    .find((id) => id['external-id-type']?.toLowerCase() === 'doi')?.['external-id-url'];
+
+  return orcidValue(doiUrl) || orcidDoi(work) || orcidValue(work.url);
+};
+
+const preferOrcidWorkSummary = (summaries: OrcidWorkSummary[]) =>
+  [...summaries].sort((a, b) => {
+    const aScore = Number(Boolean(orcidDoi(a))) + Number(Boolean(orcidValue(a['journal-title']))) + Number(Boolean(orcidValue(a.url)));
+    const bScore = Number(Boolean(orcidDoi(b))) + Number(Boolean(orcidValue(b['journal-title']))) + Number(Boolean(orcidValue(b.url)));
+    return bScore - aScore;
+  })[0];
+
+const mapOrcidWork = (work: OrcidWorkSummary, member: (typeof MEMBERS)[number]): Paper | undefined => {
+  const title = orcidValue(work.title?.title);
+
+  if (!title) {
+    return undefined;
+  }
+
+  const doi = orcidDoi(work);
+  const idSuffix = doi
+    ? slugify(doi.replace(/^https?:\/\/(dx\.)?doi\.org\//, ''))
+    : String(work['put-code'] || slugify(title));
+
+  return {
+    id: `orcid-${member.orcid}-${idSuffix}`,
+    title,
+    authors: member.name,
+    year: Number(orcidValue(work['publication-date']?.year)) || new Date().getFullYear(),
+    journal: orcidValue(work['journal-title']) || work.type || 'ORCID',
+    doi,
+    pdfUrl: orcidWorkUrl(work),
+    abstract: 'Abstract not available from ORCID.',
+    source: 'orcid',
+  };
+};
+
+const fetchOrcidPublications = async (member: (typeof MEMBERS)[number]) => {
+  if (!member.orcid) {
+    return [];
+  }
+
+  const response = await fetch(`https://pub.orcid.org/v3.0/${member.orcid}/works`, {
+    headers: {
+      Accept: 'application/json',
+    },
+    signal: AbortSignal.timeout(requestTimeoutMs),
+  });
+
+  if (!response.ok) {
+    throw new Error(`ORCID returned ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json() as OrcidWorksResponse;
+
+  return (data.group || [])
+    .map((group) => preferOrcidWorkSummary(group['work-summary'] || []))
+    .filter(Boolean)
+    .map((work) => mapOrcidWork(work, member))
+    .filter(Boolean) as Paper[];
+};
+
 const readGoogleScholarSnapshot = async () => {
   if (!existsSync(googleScholarPath)) {
     return [];
   }
 
   const raw = await readFile(googleScholarPath, 'utf8');
+  const parsed = JSON.parse(raw) as { publications?: Paper[] } | Paper[];
+  return Array.isArray(parsed) ? parsed : parsed.publications || [];
+};
+
+const readOrcidSnapshot = async () => {
+  if (!existsSync(orcidPath)) {
+    return [];
+  }
+
+  const raw = await readFile(orcidPath, 'utf8');
   const parsed = JSON.parse(raw) as { publications?: Paper[] } | Paper[];
   return Array.isArray(parsed) ? parsed : parsed.publications || [];
 };
@@ -172,6 +314,7 @@ const readPreviousSnapshot = async () => {
 const main = async () => {
   const dblpPublications: Paper[] = [];
   const googleScholarPublications: Paper[] = [];
+  const orcidPublications: Paper[] = [];
 
   for (const member of MEMBERS) {
     try {
@@ -185,13 +328,22 @@ const main = async () => {
     } catch (error: any) {
       console.warn(`Skipping Google Scholar for ${member.name}: ${error.message}`);
     }
+
+    try {
+      orcidPublications.push(...await fetchOrcidPublications(member));
+    } catch (error: any) {
+      console.warn(`Skipping ORCID for ${member.name}: ${error.message}`);
+    }
   }
 
   const previousPublications = await readPreviousSnapshot();
   const previousGoogleScholarPublications = await readGoogleScholarSnapshot();
+  const previousOrcidPublications = await readOrcidSnapshot();
   const googleScholarSnapshotPublications = dedupePapers([...previousGoogleScholarPublications, ...googleScholarPublications])
     .sort((a, b) => b.year - a.year || a.title.localeCompare(b.title));
-  const publications = dedupePapers([...previousPublications, ...dblpPublications, ...googleScholarSnapshotPublications])
+  const orcidSnapshotPublications = dedupePapers([...previousOrcidPublications, ...orcidPublications])
+    .sort((a, b) => b.year - a.year || a.title.localeCompare(b.title));
+  const publications = dedupePapers([...previousPublications, ...dblpPublications, ...googleScholarSnapshotPublications, ...orcidSnapshotPublications])
     .sort((a, b) => b.year - a.year || a.title.localeCompare(b.title));
 
   const snapshot: PublicationSnapshot = {
@@ -204,9 +356,14 @@ const main = async () => {
     generatedAt: snapshot.generatedAt,
     publications: googleScholarSnapshotPublications,
   }, null, 2)}\n`);
+  await writeFile(orcidPath, `${JSON.stringify({
+    generatedAt: snapshot.generatedAt,
+    publications: orcidSnapshotPublications,
+  }, null, 2)}\n`);
   await writeFile(publicationsPath, `${JSON.stringify(snapshot, null, 2)}\n`);
 
   console.log(`Wrote ${googleScholarSnapshotPublications.length} Google Scholar publication(s) to ${googleScholarPath}`);
+  console.log(`Wrote ${orcidSnapshotPublications.length} ORCID publication(s) to ${orcidPath}`);
   console.log(`Wrote ${publications.length} publication(s) to ${publicationsPath}`);
 };
 
