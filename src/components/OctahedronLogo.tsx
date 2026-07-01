@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface Point3D {
   x: number;
@@ -6,242 +6,265 @@ interface Point3D {
   z: number;
 }
 
+interface ProjectedPoint extends Point3D {
+  perspective: number;
+}
+
+interface Face {
+  v: [number, number, number];
+  baseColor: { r: number; g: number; b: number };
+}
+
 const VERTICES: Point3D[] = [
-  { x: 0, y: -1.3, z: 0 },  // 0: top apex
-  { x: 0, y: 1.3, z: 0 },   // 1: bottom apex
-  { x: 1, y: 0, z: 1 },    // 2: front-right corner
-  { x: -1, y: 0, z: 1 },   // 3: front-left corner
-  { x: -1, y: 0, z: -1 },  // 4: back-left corner
-  { x: 1, y: 0, z: -1 },   // 5: back-right corner
+  { x: 0, y: -1.3, z: 0 },
+  { x: 0, y: 1.3, z: 0 },
+  { x: 1, y: 0, z: 1 },
+  { x: -1, y: 0, z: 1 },
+  { x: -1, y: 0, z: -1 },
+  { x: 1, y: 0, z: -1 },
 ];
 
-// 8 triangular faces
-// Winding order determines visibility (normal pointing outwards)
-const FACES = [
-  // Top half
-  { v: [0, 2, 3], baseColor: { r: 244, g: 114, b: 182 }, label: 'pink-front-left' },     // top-front-left (light bright pink)
-  { v: [0, 5, 2], baseColor: { r: 236, g: 72, b: 153 }, label: 'pink-front-right' },    // top-front-right (vibrant core pink)
-  { v: [0, 4, 5], baseColor: { r: 219, g: 39, b: 119 }, label: 'pink-back-right' },     // top-back-right (deep pink)
-  { v: [0, 3, 4], baseColor: { r: 190, g: 24, b: 93 }, label: 'pink-back-left' },       // top-back-left (rose pink)
-  
-  // Bottom half
-  { v: [1, 3, 2], baseColor: { r: 219, g: 39, b: 119 }, label: 'pink-bottom-front-left' },  // bottom-front-left (deep pink)
-  { v: [1, 2, 5], baseColor: { r: 190, g: 24, b: 93 }, label: 'pink-bottom-front-right' }, // bottom-front-right (rose pink)
-  { v: [1, 5, 4], baseColor: { r: 157, g: 23, b: 77 }, label: 'pink-bottom-back-right' },  // bottom-back-right (dark ruby pink)
-  { v: [1, 4, 3], baseColor: { r: 131, g: 24, b: 67 }, label: 'pink-bottom-back-left' },   // bottom-back-left (shadowed deep pink)
+const FACES: Face[] = [
+  { v: [0, 2, 3], baseColor: { r: 248, g: 113, b: 176 } },
+  { v: [0, 5, 2], baseColor: { r: 236, g: 72, b: 153 } },
+  { v: [0, 4, 5], baseColor: { r: 219, g: 39, b: 119 } },
+  { v: [0, 3, 4], baseColor: { r: 190, g: 24, b: 93 } },
+  { v: [1, 3, 2], baseColor: { r: 219, g: 39, b: 119 } },
+  { v: [1, 2, 5], baseColor: { r: 190, g: 24, b: 93 } },
+  { v: [1, 5, 4], baseColor: { r: 157, g: 23, b: 77 } },
+  { v: [1, 4, 3], baseColor: { r: 131, g: 24, b: 67 } },
 ];
+
+const INITIAL_ROTATION = { x: 0.34, y: 0.42 };
+const TWO_PI = Math.PI * 2;
+const VIEWBOX_CENTER = 210;
+const MODEL_SCALE = 126;
+const CAMERA_DISTANCE = 5.2;
+
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+const rotateY = (point: Point3D, angle: number): Point3D => {
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+
+  return {
+    x: point.x * cos - point.z * sin,
+    y: point.y,
+    z: point.x * sin + point.z * cos,
+  };
+};
+
+const rotateX = (point: Point3D, angle: number): Point3D => {
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+
+  return {
+    x: point.x,
+    y: point.y * cos - point.z * sin,
+    z: point.y * sin + point.z * cos,
+  };
+};
+
+const getNormal = (v0: Point3D, v1: Point3D, v2: Point3D): Point3D => {
+  const ab = { x: v1.x - v0.x, y: v1.y - v0.y, z: v1.z - v0.z };
+  const ac = { x: v2.x - v0.x, y: v2.y - v0.y, z: v2.z - v0.z };
+  const normal = {
+    x: ab.y * ac.z - ab.z * ac.y,
+    y: ab.z * ac.x - ab.x * ac.z,
+    z: ab.x * ac.y - ab.y * ac.x,
+  };
+  const length = Math.hypot(normal.x, normal.y, normal.z) || 1;
+
+  return {
+    x: normal.x / length,
+    y: normal.y / length,
+    z: normal.z / length,
+  };
+};
+
+const project = (point: Point3D): ProjectedPoint => {
+  const perspective = CAMERA_DISTANCE / (CAMERA_DISTANCE - point.z);
+
+  return {
+    x: VIEWBOX_CENTER + point.x * MODEL_SCALE * perspective,
+    y: VIEWBOX_CENTER + point.y * MODEL_SCALE * perspective,
+    z: point.z,
+    perspective,
+  };
+};
 
 export default function OctahedronLogo() {
-  const [angleX, setAngleX] = useState(0.4);
-  const [angleY, setAngleY] = useState(0.5);
+  const [rotation, setRotation] = useState(INITIAL_ROTATION);
   const [isHovered, setIsHovered] = useState(false);
-  const isDragging = useRef(false);
-  const previousMouse = useRef({ x: 0, y: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
+  const rotationRef = useRef(INITIAL_ROTATION);
+  const velocityXRef = useRef(0.42);
+  const previousPointerRef = useRef({ x: 0, y: 0, time: 0 });
+  const isDraggingRef = useRef(false);
+  const isHoveredRef = useRef(false);
   const animationFrameRef = useRef<number | null>(null);
 
-  // Rotation logic
-  const rotateY = (point: Point3D, angle: number): Point3D => {
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
-    return {
-      x: point.x * cos - point.z * sin,
-      y: point.y,
-      z: point.x * sin + point.z * cos,
-    };
-  };
-
-  const rotateX = (point: Point3D, angle: number): Point3D => {
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
-    return {
-      x: point.x,
-      y: point.y * cos - point.z * sin,
-      z: point.y * sin + point.z * cos,
-    };
-  };
-
-  // Continuous auto-rotation when not dragging
   useEffect(() => {
-    const animate = () => {
-      if (!isDragging.current) {
-        setAngleY((prev) => (prev + (isHovered ? 0.005 : 0.015)) % (Math.PI * 2));
-      }
-      animationFrameRef.current = requestAnimationFrame(animate);
-    };
-    animationFrameRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-    };
+    isHoveredRef.current = isHovered;
   }, [isHovered]);
 
-  // Drag interaction
-  const handleMouseDown = (e: React.MouseEvent) => {
-    isDragging.current = true;
-    previousMouse.current = { x: e.clientX, y: e.clientY };
-  };
+  useEffect(() => {
+    let lastTime = performance.now();
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging.current) return;
-    const deltaX = e.clientX - previousMouse.current.x;
-    const deltaY = e.clientY - previousMouse.current.y;
-    
-    setAngleY((prev) => (prev + deltaX * 0.015) % (Math.PI * 2));
-    setAngleX((prev) => Math.max(-Math.PI / 3, Math.min(Math.PI / 3, prev + deltaY * 0.015)));
-    
-    previousMouse.current = { x: e.clientX, y: e.clientY };
-  };
+    const animate = (time: number) => {
+      const deltaSeconds = Math.min((time - lastTime) / 1000, 0.04);
+      lastTime = time;
 
-  const handleMouseUpOrLeave = () => {
-    isDragging.current = false;
-  };
+      if (!isDraggingRef.current) {
+        const targetVelocity = isHoveredRef.current ? 0.18 : 0.38;
+        const blend = 1 - Math.exp(-deltaSeconds * 2.4);
+        const idleYaw = INITIAL_ROTATION.y + Math.sin(time * 0.00055) * 0.06;
 
-  // Touch handlers for mobile devices
-  const handleTouchStart = (e: React.TouchEvent) => {
-    isDragging.current = true;
-    previousMouse.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  };
+        velocityXRef.current += (targetVelocity - velocityXRef.current) * blend;
+        rotationRef.current = {
+          x: (rotationRef.current.x + velocityXRef.current * deltaSeconds) % TWO_PI,
+          y: rotationRef.current.y + (idleYaw - rotationRef.current.y) * blend,
+        };
+        setRotation(rotationRef.current);
+      }
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging.current) return;
-    const deltaX = e.touches[0].clientX - previousMouse.current.x;
-    const deltaY = e.touches[0].clientY - previousMouse.current.y;
-    
-    setAngleY((prev) => (prev + deltaX * 0.015) % (Math.PI * 2));
-    setAngleX((prev) => Math.max(-Math.PI / 3, Math.min(Math.PI / 3, prev + deltaY * 0.015)));
-    
-    previousMouse.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-  };
-
-  // Light source placed at top-front-right (1.5, -1.5, 2)
-  const lightSource = { x: 1, y: -1, z: 1.5 };
-  // Normalize light source vector
-  const len = Math.sqrt(lightSource.x ** 2 + lightSource.y ** 2 + lightSource.z ** 2);
-  const lightNorm = { x: lightSource.x / len, y: lightSource.y / len, z: lightSource.z / len };
-
-  // Project vertices
-  const scale = 135;
-  const cx = 210;
-  const cy = 210;
-
-  const rotatedVertices = VERTICES.map((v) => {
-    // 1. Rotate Y, 2. Rotate X
-    const ry = rotateY(v, angleY);
-    const rx = rotateX(ry, angleX);
-    return rx;
-  });
-
-  const projectedVertices = rotatedVertices.map((v) => ({
-    x: cx + v.x * scale,
-    y: cy + v.y * scale,
-    z: v.z,
-  }));
-
-  // Render and shade faces
-  const renderedFaces = FACES.map((face, index) => {
-    const v0 = rotatedVertices[face.v[0]];
-    const v1 = rotatedVertices[face.v[1]];
-    const v2 = rotatedVertices[face.v[2]];
-
-    const p0 = projectedVertices[face.v[0]];
-    const p1 = projectedVertices[face.v[1]];
-    const p2 = projectedVertices[face.v[2]];
-
-    // Cross product to get surface normal
-    const ab = { x: v1.x - v0.x, y: v1.y - v0.y, z: v1.z - v0.z };
-    const ac = { x: v2.x - v0.x, y: v2.y - v0.y, z: v2.z - v0.z };
-    
-    const normal = {
-      x: ab.y * ac.z - ab.z * ac.y,
-      y: ab.z * ac.x - ab.x * ac.z,
-      z: ab.x * ac.y - ab.y * ac.x,
+      animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    // Normalize normal vector
-    const nLen = Math.sqrt(normal.x ** 2 + normal.y ** 2 + normal.z ** 2);
-    const norm = { x: normal.x / nLen, y: normal.y / nLen, z: normal.z / nLen };
+    animationFrameRef.current = requestAnimationFrame(animate);
 
-    // Visible if z is positive (pointing towards screen)
-    const isVisible = norm.z > 0;
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, []);
 
-    // Dot product with light source for shading
-    const dot = norm.x * lightNorm.x + norm.y * lightNorm.y + norm.z * lightNorm.z;
-    const intensity = Math.max(0.4, Math.min(1.0, (dot + 1) / 2)); // map -1..1 to 0.4..1.0
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    isDraggingRef.current = true;
+    previousPointerRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      time: performance.now(),
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  };
 
-    // Shade color
-    const r = Math.round(face.baseColor.r * intensity);
-    const g = Math.round(face.baseColor.g * intensity);
-    const b = Math.round(face.baseColor.b * intensity);
-    const colorHex = `rgb(${r}, ${g}, ${b})`;
+  const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDraggingRef.current) {
+      return;
+    }
+
+    const currentTime = performance.now();
+    const previousPointer = previousPointerRef.current;
+    const deltaX = event.clientX - previousPointer.x;
+    const deltaY = event.clientY - previousPointer.y;
+    const deltaSeconds = Math.max((currentTime - previousPointer.time) / 1000, 0.016);
+
+    velocityXRef.current = clamp((deltaY * 0.012) / deltaSeconds, -2.4, 2.4);
+    rotationRef.current = {
+      x: (rotationRef.current.x + deltaY * 0.012) % TWO_PI,
+      y: clamp(rotationRef.current.y + deltaX * 0.006, -0.72, 0.72),
+    };
+    previousPointerRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+      time: currentTime,
+    };
+    setRotation(rotationRef.current);
+  };
+
+  const handlePointerUp = (event: React.PointerEvent<HTMLDivElement>) => {
+    isDraggingRef.current = false;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+  };
+
+  const lightSource = { x: 0.75, y: -0.95, z: 1.4 };
+  const lightLength = Math.hypot(lightSource.x, lightSource.y, lightSource.z) || 1;
+  const light = {
+    x: lightSource.x / lightLength,
+    y: lightSource.y / lightLength,
+    z: lightSource.z / lightLength,
+  };
+
+  const rotatedVertices = VERTICES.map((vertex) => rotateX(rotateY(vertex, rotation.y), rotation.x));
+  const projectedVertices = rotatedVertices.map(project);
+
+  const renderedFaces = FACES.map((face, index) => {
+    const vertex0 = rotatedVertices[face.v[0]];
+    const vertex1 = rotatedVertices[face.v[1]];
+    const vertex2 = rotatedVertices[face.v[2]];
+    const point0 = projectedVertices[face.v[0]];
+    const point1 = projectedVertices[face.v[1]];
+    const point2 = projectedVertices[face.v[2]];
+    const normal = getNormal(vertex0, vertex1, vertex2);
+    const lightDot = normal.x * light.x + normal.y * light.y + normal.z * light.z;
+    const intensity = clamp(0.44 + Math.max(lightDot, 0) * 0.48 + normal.z * 0.1, 0.36, 1);
 
     return {
       index,
-      isVisible,
-      colorHex,
-      pointsStr: `${p0.x},${p0.y} ${p1.x},${p1.y} ${p2.x},${p2.y}`,
-      normZ: norm.z,
-      avgZ: (p0.z + p1.z + p2.z) / 3, // for sorting Z-buffer if needed
+      pointsString: `${point0.x},${point0.y} ${point1.x},${point1.y} ${point2.x},${point2.y}`,
+      avgZ: (vertex0.z + vertex1.z + vertex2.z) / 3,
+      isVisible: normal.z > 0.015,
+      color: `rgb(${Math.round(face.baseColor.r * intensity)}, ${Math.round(face.baseColor.g * intensity)}, ${Math.round(face.baseColor.b * intensity)})`,
     };
   });
 
-  // Sort visible faces by average Z-depth so they draw in correct order (though backface culling does most of the work)
-  const visibleFaces = renderedFaces.filter(f => f.isVisible).sort((a, b) => b.avgZ - a.avgZ);
+  const visibleFaces = renderedFaces
+    .filter((face) => face.isVisible)
+    .sort((a, b) => a.avgZ - b.avgZ);
 
   return (
-    <div 
+    <div
       id="octahedron-logo-container"
-      ref={containerRef}
-      className={`relative w-[380px] h-[380px] cursor-grab active:cursor-grabbing transition-transform duration-500 ease-out ${
-        isHovered ? 'scale-105' : 'scale-100'
+      className={`group relative h-[330px] w-[330px] cursor-grab select-none transition-transform duration-500 ease-out active:cursor-grabbing sm:h-[380px] sm:w-[380px] ${
+        isHovered ? 'scale-[1.03]' : 'scale-100'
       }`}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUpOrLeave}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleMouseUpOrLeave}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerUp}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => {
         setIsHovered(false);
-        handleMouseUpOrLeave();
+        isDraggingRef.current = false;
       }}
+      role="img"
+      aria-label="Rotating octahedron logo"
+      style={{ touchAction: 'none' }}
     >
-      {/* Glow Effect behind */}
-      <div className="absolute inset-0 rounded-full bg-pink-500/10 blur-3xl -z-10 animate-pulse duration-4000 pointer-events-none" />
+      <div className="pointer-events-none absolute inset-6 -z-10 rounded-full bg-pink-500/15 blur-3xl" />
+      <div className="pointer-events-none absolute inset-16 -z-10 rounded-full bg-white/50 blur-2xl dark:bg-pink-200/10" />
 
-      {/* SVG Container */}
-      <svg 
+      <svg
         id="octahedron-logo-svg"
-        viewBox="0 0 420 420" 
-        className="w-full h-full select-none overflow-visible"
+        viewBox="0 0 420 420"
+        className="h-full w-full overflow-visible"
       >
         <defs>
-          {/* Subtle drop shadow under the octahedron edges */}
-          <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="3" dy="5" stdDeviation="8" floodColor="#d946ef" floodOpacity="0.15" />
+          <filter id="octahedron-soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="4" dy="7" stdDeviation="9" floodColor="#831843" floodOpacity="0.24" />
           </filter>
         </defs>
 
-        <g filter="url(#soft-shadow)">
-          {/* Render face polygons */}
+        <g filter="url(#octahedron-soft-shadow)">
           {visibleFaces.map((face) => (
             <g key={face.index}>
-              {/* Triangular Facet */}
               <polygon
-                points={face.pointsStr}
-                fill={face.colorHex}
-                stroke="#111827" // deep charcoal edge line
-                strokeWidth="2.5"
+                points={face.pointsString}
+                fill={face.color}
+                stroke="rgba(17, 24, 39, 0.82)"
+                strokeWidth="2.25"
                 strokeLinejoin="round"
-                className="transition-all duration-75"
               />
             </g>
           ))}
         </g>
       </svg>
 
-      {/* Helper text tooltip fading in */}
-      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-gray-900/80 text-white text-[10px] tracking-widest uppercase font-mono px-3 py-1 rounded-full opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none select-none border border-pink-500/20 backdrop-blur-sm">
+      <div className="pointer-events-none absolute bottom-2 left-1/2 -translate-x-1/2 rounded-full border border-pink-500/20 bg-gray-950/80 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-white opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
         Drag to Spin
       </div>
     </div>

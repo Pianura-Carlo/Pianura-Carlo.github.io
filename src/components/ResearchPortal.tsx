@@ -65,6 +65,10 @@ export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }
     ? papers.filter((paper) => paper.authors.split(/,\s*/).some((author) => isLikelySameAuthor(author, selectedMember.name)))
     : papers;
 
+  const sortedVisiblePapers = [...visiblePapers].sort((a, b) =>
+    Number(b.featured === true) - Number(a.featured === true)
+  );
+
   // Helper to highlight member names in the authors list
   const highlightGroupMembers = (authorsStr: string) => {
     const parts = authorsStr.split(/,\s*/);
@@ -118,17 +122,28 @@ export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }
       )}
 
       {/* Papers List */}
-      <div className="space-y-6">
-        {visiblePapers.length > 0 ? (
-          visiblePapers.map((paper) => (
+      {visiblePapers.length > 0 && (
+        <div className="space-y-6">
+          {sortedVisiblePapers.map((paper) => (
             <div
               key={paper.id}
-              className="bg-white dark:bg-gray-900 border border-pink-50 dark:border-pink-950/30 hover:border-pink-200 dark:hover:border-pink-800/50 rounded-2xl p-6 transition-all duration-300 hover:shadow-md group"
+              className={`rounded-2xl border p-6 transition-all duration-300 group ${
+                paper.featured === true
+                  ? 'bg-pink-50/70 dark:bg-pink-950/20 border-pink-200/80 dark:border-pink-900/60 hover:border-pink-300 dark:hover:border-pink-800 hover:shadow-md hover:shadow-pink-600/10'
+                  : 'bg-white dark:bg-gray-900 border-pink-50 dark:border-pink-950/30 hover:border-pink-200 dark:hover:border-pink-800/50 hover:shadow-md'
+              }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="space-y-2">
+                  {paper.featured === true && (
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-pink-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm shadow-pink-700/10">
+                      <Sparkles className="h-3 w-3" />
+                      Featured
+                    </div>
+                  )}
+
                   {/* Title */}
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-snug group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
+                  <h3 className={`${paper.featured === true ? 'text-xl text-gray-950' : 'text-lg text-gray-900'} font-semibold dark:text-white leading-snug group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors`}>
                     {paper.title}
                   </h3>
                   
@@ -178,17 +193,19 @@ export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }
               </div>
 
             </div>
-          ))
-        ) : (
-          <div className="text-center py-16 bg-pink-50/10 dark:bg-pink-950/5 border border-dashed border-pink-200 dark:border-pink-900/30 rounded-2xl">
-            <BookOpen className="w-8 h-8 text-pink-300 mx-auto mb-3" />
-            <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200">No Publications Available</h4>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-sm mx-auto">
-              {selectedMember ? 'No DBLP-indexed publications are currently linked to this member.' : 'No DBLP-indexed publications are currently available.'}
-            </p>
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
+      )}
+
+      {visiblePapers.length === 0 && (
+        <div className="text-center py-16 bg-pink-50/10 dark:bg-pink-950/5 border border-dashed border-pink-200 dark:border-pink-900/30 rounded-2xl">
+          <BookOpen className="w-8 h-8 text-pink-300 mx-auto mb-3" />
+          <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200">No Publications Available</h4>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-sm mx-auto">
+            {selectedMember ? 'No publications are currently linked to this member.' : 'No publications are currently available.'}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

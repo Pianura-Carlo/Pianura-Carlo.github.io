@@ -23,4 +23,5 @@ export interface Paper {
   pdfUrl?: string;
   abstract: string;
   source: 'dblp' | 'openalex' | 'semanticscholar' | 'googlescholar';
+  featured?: boolean;
 }

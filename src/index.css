@@ -19,3 +19,331 @@ body {
 .dark body {
   background: #080a12;
 }
+
+.profile-modal-backdrop {
+  animation: profile-backdrop-in 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.profile-modal-surface {
+  animation: profile-surface-in 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  isolation: isolate;
+}
+
+.profile-modal-content {
+  animation: profile-content-in 700ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+}
+
+.profile-copy > *,
+.profile-action-rail > * {
+  animation: profile-stagger-in 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.profile-copy > :nth-child(1) {
+  animation-delay: 180ms;
+}
+
+.profile-copy > :nth-child(2) {
+  animation-delay: 260ms;
+}
+
+.profile-copy > :nth-child(3) {
+  animation-delay: 340ms;
+}
+
+.profile-action-rail > :nth-child(1) {
+  animation-delay: 380ms;
+}
+
+.profile-action-rail > :nth-child(2) {
+  animation-delay: 440ms;
+}
+
+.profile-action-rail > :nth-child(3) {
+  animation-delay: 500ms;
+}
+
+.profile-action-rail > :nth-child(4) {
+  animation-delay: 560ms;
+}
+
+.profile-octa-bloom {
+  animation: profile-octa-bloom 1100ms cubic-bezier(0.16, 1, 0.3, 1) both,
+    profile-octa-drift 10s ease-in-out 1100ms infinite alternate;
+  transform-origin: center;
+}
+
+.profile-octa-bloom path {
+  stroke-dasharray: 620;
+  stroke-dashoffset: 620;
+  animation: profile-octa-draw 880ms cubic-bezier(0.16, 1, 0.3, 1) 120ms both;
+}
+
+.profile-facet {
+  position: absolute;
+  width: clamp(7rem, 14vw, 13rem);
+  aspect-ratio: 1;
+  clip-path: polygon(50% 0, 100% 100%, 0 68%);
+  border: 1px solid rgba(236, 72, 153, 0.18);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.16), rgba(255, 255, 255, 0.02));
+  opacity: 0;
+  transform-origin: 50% 60%;
+}
+
+.profile-facet-a {
+  --profile-facet-rotate: -18deg;
+  left: 7%;
+  top: 14%;
+  animation: profile-facet-a 920ms cubic-bezier(0.16, 1, 0.3, 1) 90ms both;
+}
+
+.profile-facet-b {
+  --profile-facet-rotate: 24deg;
+  right: 9%;
+  top: 18%;
+  width: clamp(5rem, 10vw, 9rem);
+  animation: profile-facet-b 980ms cubic-bezier(0.16, 1, 0.3, 1) 130ms both;
+}
+
+.profile-facet-c {
+  --profile-facet-rotate: 42deg;
+  bottom: 10%;
+  left: 48%;
+  width: clamp(6rem, 12vw, 11rem);
+  animation: profile-facet-c 1040ms cubic-bezier(0.16, 1, 0.3, 1) 170ms both;
+}
+
+.profile-modal-closing {
+  pointer-events: none;
+  animation: profile-backdrop-out 560ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+.profile-modal-closing .profile-modal-surface {
+  animation: profile-surface-out 560ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+.profile-modal-closing .profile-modal-content {
+  animation: profile-content-out 320ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+.profile-modal-closing .profile-copy > *,
+.profile-modal-closing .profile-action-rail > * {
+  animation: profile-stagger-out 280ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+.profile-modal-closing .profile-close-button {
+  animation: profile-close-button-out 220ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+.profile-modal-closing .profile-octa-bloom {
+  animation: profile-octa-collapse 540ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+.profile-modal-closing .profile-octa-bloom path {
+  animation: profile-octa-undraw 440ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+.profile-modal-closing .profile-facet {
+  animation: profile-facet-collapse 440ms cubic-bezier(0.7, 0, 0.84, 0) both;
+}
+
+@keyframes profile-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes profile-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes profile-surface-in {
+  from {
+    clip-path: polygon(50% 0, 56% 50%, 50% 100%, 44% 50%);
+  }
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+@keyframes profile-surface-out {
+  from {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+  to {
+    clip-path: polygon(50% 2%, 57% 50%, 50% 98%, 43% 50%);
+  }
+}
+
+@keyframes profile-content-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes profile-content-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.975);
+    filter: blur(8px);
+  }
+}
+
+@keyframes profile-stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes profile-stagger-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes profile-octa-bloom {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotateX(62deg) rotateZ(-28deg) scale(0.58);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotateX(0) rotateZ(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes profile-close-button-out {
+  from {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.72);
+  }
+}
+
+@keyframes profile-octa-collapse {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotateZ(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotateX(58deg) rotateZ(32deg) scale(0.36);
+    filter: blur(7px);
+  }
+}
+
+@keyframes profile-octa-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes profile-octa-undraw {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: 620;
+  }
+}
+
+@keyframes profile-octa-drift {
+  from {
+    transform: translate(-50%, -50%) rotateZ(-2deg) scale(1);
+  }
+  to {
+    transform: translate(-50%, -50%) rotateZ(3deg) scale(1.03);
+  }
+}
+
+@keyframes profile-facet-a {
+  from {
+    opacity: 0;
+    transform: translate(78px, 44px) rotate(34deg) scale(0.55);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) rotate(-18deg) scale(1);
+  }
+}
+
+@keyframes profile-facet-b {
+  from {
+    opacity: 0;
+    transform: translate(-80px, 72px) rotate(-46deg) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) rotate(24deg) scale(1);
+  }
+}
+
+@keyframes profile-facet-c {
+  from {
+    opacity: 0;
+    transform: translate(-38px, -92px) rotate(16deg) scale(0.48);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0) rotate(42deg) scale(1);
+  }
+}
+
+@keyframes profile-facet-collapse {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) rotate(var(--profile-facet-rotate, 0deg)) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(0, 0) rotate(var(--profile-facet-rotate, 0deg)) scale(0.32);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-modal-backdrop,
+  .profile-modal-surface,
+  .profile-modal-content,
+  .profile-copy > *,
+  .profile-action-rail > *,
+  .profile-octa-bloom,
+  .profile-octa-bloom path,
+  .profile-facet {
+    animation: none;
+  }
+}

@@ -6,7 +6,7 @@ export const MEMBERS: Member[] = [
     name: 'Davide Cirilli',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ac ligula vel diam molestie vehicula non in tellus. Curabitur sed nisl eu lectus convallis feugiat id sed erat. Aliquam lorem ante, interdum vitae pretium non, eleifend sed tellus.',
-    github: 'davidecirilli',
+    github: 'davy592',
     researchInterests: ['Deep Learning', 'Computer Vision', 'Reinforcement Learning', 'Neural Architectures'],
   },
   {
@@ -16,6 +16,7 @@ export const MEMBERS: Member[] = [
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pretium pretium tempor. Ut eget imperdiet neque. In sit amet imperdiet ante. Sed vel varius nulla. Duis interdum luctus nisl, eu cursus mi scelerisque rhoncus.',
     github: 'mattiacurri',
     dblpPid: '433/5477',
+    googleScholarId: 'yrLYcIEAAAAJ',
     researchInterests: ['Big Data Pipelines', 'Data Mining', 'Statistical Modeling', 'Graph Databases'],
   },
   {
@@ -31,8 +32,9 @@ export const MEMBERS: Member[] = [
     name: 'Filippo Di Gravina',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque in ipsum id orci porta dapibus. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Sed porttitor lectus nibh. Praesent sapien massa, convallis a pellentesque nec.',
-    github: 'filippodigravina',
+    github: 'fdigravina',
     dblpPid: '433/5354',
+    googleScholarId: 'V5lRA70AAAAJ',
     researchInterests: ['Formal Verification', 'Model Checking', 'Compiler Construction', 'Static Analysis'],
   },
   {
@@ -40,8 +42,9 @@ export const MEMBERS: Member[] = [
     name: 'Francesco Damiano Di Gregorio',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet quam id dui posuere blandit. Proin eget tortor risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque.',
-    github: 'fdgregorio',
+    github: 'nanonani',
     dblpPid: '433/5300',
+    googleScholarId: '5ohFWrkAAAAJ',
     researchInterests: ['Quantum Computing', 'Quantum Algorithms', 'Complexity Theory', 'High-Performance Algorithms'],
   },
   {
@@ -51,6 +54,7 @@ export const MEMBERS: Member[] = [
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur non nulla ut libero vulputate elementum. Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus. Nulla quis lorem ut libero malesuada feugiat.',
     github: 'Fonty02',
     dblpPid: '407/3984',
+    googleScholarId: 'YqUDOJEAAAAJ',
     researchInterests: ['Distributed Systems', 'Cloud Computing', 'Blockchain', 'Network Protocols'],
   },
   {
@@ -60,6 +64,7 @@ export const MEMBERS: Member[] = [
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ultricies ligula sed magna dictum porta. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem.',
     github: 'stefanolabianca',
     dblpPid: '437/6235',
+    googleScholarId: 'hEsbpU4AAAAJ',
     researchInterests: ['Natural Language Processing', 'Text Embeddings', 'Semantic Search', 'Transformer Architectures'],
   },
   {
@@ -67,7 +72,7 @@ export const MEMBERS: Member[] = [
     name: 'Mauro Losurdo',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui. Proin eget tortor risus.',
-    github: 'maurolosurdo',
+    github: 'switcha57',
     researchInterests: ['Cryptography', 'Cybersecurity', 'Zero-Knowledge Proofs', 'Secure Computing'],
   },
   {
@@ -84,7 +89,7 @@ export const MEMBERS: Member[] = [
     name: 'Vincenzo Monopoli',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin molestie malesuada. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel.',
-    github: 'vincenzomonopoli',
+    github: 'vincy02',
     researchInterests: ['Robot Perception', 'Spatial AI', 'Sensor Fusion', 'Real-time Computer Vision'],
   },
   {
@@ -94,6 +99,7 @@ export const MEMBERS: Member[] = [
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed porttitor lectus nibh. Quisque velit nisi, pretium ut lacinia in, elementum id enim. Praesent sapien massa, convallis a pellentesque nec, egestas non nisi.',
     github: 'firekern',
     dblpPid: '433/5376',
+    googleScholarId: 'q3kHeygAAAAJ',
     researchInterests: ['Algorithm Design', 'Graph Theory', 'Competitive Programming', 'Discrete Mathematics'],
   },
   {

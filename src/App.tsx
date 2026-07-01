@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { MEMBERS } from './data';
 import OctahedronLogo from './components/OctahedronLogo';
 import MemberCard from './components/MemberCard';
@@ -34,11 +34,13 @@ const getInitialTheme = (): Theme => {
 export default function App() {
   const [selectedMemberId, setSelectedMemberId] = useState<string | undefined>(undefined);
   const [profileMemberId, setProfileMemberId] = useState<string | undefined>(undefined);
+  const [isProfileClosing, setIsProfileClosing] = useState(false);
   const [memberSearchQuery, setMemberSearchQuery] = useState('');
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
   
   const membersSectionRef = useRef<HTMLDivElement>(null);
   const researchSectionRef = useRef<HTMLDivElement>(null);
+  const profileCloseTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -59,6 +61,11 @@ export default function App() {
   };
 
   const handleViewMemberProfile = (memberId: string) => {
+    if (profileCloseTimeoutRef.current) {
+      window.clearTimeout(profileCloseTimeoutRef.current);
+      profileCloseTimeoutRef.current = null;
+    }
+    setIsProfileClosing(false);
     setProfileMemberId(memberId);
   };
 
@@ -77,6 +84,26 @@ export default function App() {
     ? MEMBERS.find((member) => member.id === profileMemberId)
     : undefined;
 
+  const closeProfile = useCallback(() => {
+    if (!profileMemberId || isProfileClosing) {
+      return;
+    }
+
+    setIsProfileClosing(true);
+
+    if (profileCloseTimeoutRef.current) {
+      window.clearTimeout(profileCloseTimeoutRef.current);
+    }
+
+    const closeDelay = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 560;
+
+    profileCloseTimeoutRef.current = window.setTimeout(() => {
+      setProfileMemberId(undefined);
+      setIsProfileClosing(false);
+      profileCloseTimeoutRef.current = null;
+    }, closeDelay);
+  }, [isProfileClosing, profileMemberId]);
+
   useEffect(() => {
     if (!profileMember) {
       return;
@@ -84,7 +111,7 @@ export default function App() {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setProfileMemberId(undefined);
+        closeProfile();
       }
     };
 
@@ -95,7 +122,13 @@ export default function App() {
       document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [profileMember]);
+  }, [closeProfile, profileMember]);
+
+  useEffect(() => () => {
+    if (profileCloseTimeoutRef.current) {
+      window.clearTimeout(profileCloseTimeoutRef.current);
+    }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#fafafc] text-[#1d1d1f] dark:bg-[#080a12] dark:text-gray-100 font-sans antialiased selection:bg-pink-500 selection:text-white transition-colors duration-300">
@@ -186,9 +219,6 @@ export default function App() {
           {/* Spectacular 3D Interactive Rotating Logo Model */}
           <div className="flex flex-col items-center justify-center pt-8">
             <OctahedronLogo />
-            <p className="text-[11px] text-pink-400 uppercase tracking-widest font-mono mt-3">
-              Official Double-Pyramid Octahedron Motif
-            </p>
           </div>
         </div>
       </section>
@@ -281,27 +311,49 @@ export default function App() {
 
       {profileMember && (
         <div
-          className="fixed inset-0 z-50 bg-white dark:bg-gray-950"
+          className={`profile-modal-backdrop fixed inset-0 z-50 bg-white dark:bg-gray-950 ${
+            isProfileClosing ? 'profile-modal-closing' : ''
+          }`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="member-profile-title"
         >
           <div
-            className="relative h-screen w-full overflow-y-auto bg-white p-6 dark:bg-gray-950 md:p-12 lg:p-16 xl:p-24"
+            className="profile-modal-surface relative h-screen w-full overflow-y-auto bg-white p-6 dark:bg-gray-950 md:p-12 lg:p-16 xl:p-24"
           >
+            <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+              <svg
+                className="profile-octa-bloom absolute left-1/2 top-1/2 h-[min(82vw,760px)] w-[min(82vw,760px)] -translate-x-1/2 -translate-y-1/2 text-pink-500/20 dark:text-pink-300/18"
+                viewBox="0 0 420 420"
+                fill="none"
+              >
+                <path d="M210 42 350 210 210 378 70 210Z" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M210 42 210 378M70 210 350 210M210 42 70 210M210 42 350 210M210 378 70 210M210 378 350 210" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M210 92 304 210 210 328 116 210Z" stroke="currentColor" strokeWidth="1" opacity="0.55" />
+              </svg>
+              <div className="profile-facet profile-facet-a" />
+              <div className="profile-facet profile-facet-b" />
+              <div className="profile-facet profile-facet-c" />
+            </div>
+
             <button
               type="button"
-              onClick={() => setProfileMemberId(undefined)}
-              className="fixed right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-pink-100 bg-white text-gray-500 shadow-sm transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+              onPointerDown={(event) => {
+                if (event.pointerType !== 'mouse' || event.button === 0) {
+                  closeProfile();
+                }
+              }}
+              onClick={closeProfile}
+              className="profile-close-button fixed right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-pink-100 bg-white text-gray-500 shadow-sm transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
               aria-label="Close profile"
             >
               <X className="h-4 w-4" />
             </button>
 
-            <div className="grid min-h-full w-full content-center gap-10 pr-0 md:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] md:items-center md:gap-16 md:pr-8 xl:gap-24">
-              <div className="max-w-5xl space-y-8">
+            <div className="profile-modal-content relative grid min-h-full w-full content-center gap-10 pr-0 md:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)] md:items-center md:gap-16 md:pr-8 xl:gap-24">
+              <div className="profile-copy max-w-5xl space-y-8">
                 <div className="space-y-4">
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-pink-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-pink-600 dark:bg-pink-950/30 dark:text-pink-300">
+                  <div className="profile-chip inline-flex items-center gap-1.5 rounded-full bg-pink-50 px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-pink-600 dark:bg-pink-950/30 dark:text-pink-300">
                     <UserRound className="h-3.5 w-3.5" />
                     Complete Profile
                   </div>
@@ -336,7 +388,7 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="profile-action-rail space-y-4">
                 <button
                   type="button"
                   onClick={() => {
@@ -419,9 +471,6 @@ export default function App() {
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white tracking-tight">
               Publications
             </h2>
-            <p className="text-sm md:text-md text-gray-600 dark:text-gray-300 font-light leading-relaxed">
-              Academic work authored by the group, generated from stable publication identifiers and rendered from a static data file.
-            </p>
           </div>
 
           {/* Publications List Component */}
@@ -433,16 +482,7 @@ export default function App() {
       {/* Apple-Style Parchment/Rose Footer */}
       <footer id="footer" className="bg-[#f5f5f7] dark:bg-gray-950 border-t border-pink-100/30 dark:border-pink-950/40 text-gray-500 dark:text-gray-400 py-12 px-6 md:px-12 transition-colors duration-300">
         <div className="max-w-3xl mx-auto space-y-6 text-center">
-          <div className="text-[10px] text-gray-400 dark:text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div>
-              <p>© 2026 Pianura Carlo. All rights reserved. Code licensed under Apache-2.0.</p>
-            </div>
-            <div className="flex flex-wrap justify-center gap-4">
-              <span className="hover:text-pink-600 transition-colors cursor-default">Privacy Policy</span>
-              <span className="hover:text-pink-600 transition-colors cursor-default">Terms of Study</span>
-              <span className="hover:text-pink-600 transition-colors cursor-default">Independent Research Group</span>
-            </div>
-          </div>
+              <p>© 2026 Pianura Carlo.</p>
         </div>
       </footer>
     </div>
