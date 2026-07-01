@@ -242,6 +242,43 @@ const normalizeDoi = (doi: string) =>
 export const paperIdentityKey = (paper: Paper) =>
   paper.doi ? `doi:${normalizeDoi(paper.doi)}` : `title:${normalizeText(paper.title)}`;
 
+const authorCount = (authors: string) =>
+  authors.split(/,\s*/).filter(Boolean).length;
+
+const normalizeInvertedAuthorList = (authors: string) => {
+  const parts = authors.split(',').map((part) => part.trim()).filter(Boolean);
+  const singleTokenParts = parts.filter((part) => !part.includes(' ')).length;
+
+  if (parts.length < 4 || parts.length % 2 !== 0 || singleTokenParts < parts.length / 2) {
+    return authors;
+  }
+
+  const names: string[] = [];
+
+  for (let index = 0; index < parts.length; index += 2) {
+    names.push(`${parts[index + 1]} ${parts[index]}`);
+  }
+
+  return names.join(', ');
+};
+
+const preferAuthors = (existingAuthors: string, incomingAuthors: string) => {
+  const normalizedExistingAuthors = normalizeInvertedAuthorList(existingAuthors);
+  const normalizedIncomingAuthors = normalizeInvertedAuthorList(incomingAuthors);
+  const existingCount = authorCount(normalizedExistingAuthors);
+  const incomingCount = authorCount(normalizedIncomingAuthors);
+
+  if (incomingCount > existingCount) {
+    return normalizedIncomingAuthors;
+  }
+
+  if (incomingCount === existingCount && normalizedIncomingAuthors.length > normalizedExistingAuthors.length) {
+    return normalizedIncomingAuthors;
+  }
+
+  return normalizedExistingAuthors;
+};
+
 export const dedupePapers = (papers: Paper[]) => {
   const uniquePapers: Paper[] = [];
   const doiIndex = new Map<string, number>();
@@ -268,6 +305,7 @@ export const dedupePapers = (papers: Paper[]) => {
     const existing = uniquePapers[existingIndex];
     const mergedPaper = {
       ...existing,
+      authors: preferAuthors(existing.authors, paper.authors),
       doi: existing.doi || paper.doi,
       pdfUrl: existing.pdfUrl || paper.pdfUrl,
       abstract: existing.abstract || paper.abstract,

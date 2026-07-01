@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-01T19:38:14.370Z",
+  "generatedAt": "2026-07-01T20:15:35.641Z",
   "publications": [
     {
       "id": "orcid-0009-0001-7828-0757-10-1007-978-3-032-30530-5-22",
       "title": "A Binning-Based Approach for Intrusion Detection and Attack Classification in Internet of Medical Things Networks",
-      "authors": "Andrea Porcelli",
+      "authors": "Lerina Aversano, Stefano Galantucci, Michele Mastroianni, Andrea Porcelli",
       "year": 2027,
       "journal": "book-chapter",
       "doi": "https://doi.org/10.1007/978-3-032-30530-5_22",
@@ -15,7 +15,7 @@
     {
       "id": "orcid-0009-0002-9280-4446-216818695",
       "title": "Evaluating Generative Text-to-Motion for Occupational Wellbeing Recommender Systems",
-      "authors": "Stefano Labianca",
+      "authors": "Gaetano Dibenedetto, Stefano Labianca, Marco Polignano, Pasquale Lops",
       "year": 2026,
       "journal": "journal-article",
       "abstract": "Abstract not available from ORCID.",
@@ -25,7 +25,7 @@
     {
       "id": "orcid-0009-0001-0546-7676-219374166",
       "title": "FFT-UniBa at Cruciverb-IT: Special Length Tokens and CSP for Italian Crossword Solving.",
-      "authors": "Mattia Curri",
+      "authors": "Andrea Porcelli, Filippo Di Gravina, Emanuele Fontana, Mattia Curri, Francesco Damiano Di Gregorio",
       "year": 2026,
       "journal": "EVALITA",
       "abstract": "Abstract not available from ORCID.",
@@ -35,7 +35,7 @@
     {
       "id": "orcid-0009-0001-7828-0757-10-1007-s10207-026-01285-3",
       "title": "SurIoT: Automatic generation of Internet-of-Medical-Things Network Intrusion Detection and Prevention Rules",
-      "authors": "Andrea Porcelli",
+      "authors": "Lerina Aversano, Stefano Galantucci, Andrea Porcelli",
       "year": 2026,
       "journal": "International Journal of Information Security",
       "doi": "https://doi.org/10.1007/s10207-026-01285-3",
@@ -46,7 +46,7 @@
     {
       "id": "orcid-0009-0008-7400-5820-10-1145-3699682-3728336",
       "title": "Training Green and Sustainable Recommendation Models: Introducing Carbon Footprint Data into Early Stopping Criteria",
-      "authors": "Emanuele Fontana",
+      "authors": "G. Spillo, A. De Filippo, E. Fontana, M. Milano, G. Semeraro",
       "year": 2025,
       "journal": "Umap 2025 Proceedings of the 33rd ACM Conference on User Modeling Adaptation and Personalization",
       "doi": "https://doi.org/10.1145/3699682.3728336",
