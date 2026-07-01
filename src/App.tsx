@@ -214,6 +214,16 @@ export default function App() {
             >
               View Publications
             </button>
+            <a
+              href="https://github.com/Pianura-Carlo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-gray-950 hover:bg-gray-800 dark:bg-white dark:hover:bg-pink-50 text-white dark:text-gray-950 rounded-full py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 shadow-md shadow-gray-900/10 dark:shadow-pink-500/10"
+            >
+              <Github className="w-4 h-4" />
+              GitHub Org
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
           </div>
 
           {/* Spectacular 3D Interactive Rotating Logo Model */}
