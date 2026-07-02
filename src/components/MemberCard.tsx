@@ -1,6 +1,6 @@
 import React from 'react';
 import { Member } from '../types';
-import { Github, Mail, BookOpen, UserRound } from 'lucide-react';
+import { ArrowUpRight, Github, Mail, BookOpen } from 'lucide-react';
 
 interface MemberCardProps {
   key?: string;
@@ -27,11 +27,18 @@ export default function MemberCard({ member, onSelectMember, onViewProfile }: Me
       onClick={openProfile}
       onKeyDown={handleKeyDown}
       aria-label={`View complete profile for ${member.name}`}
-      className="bg-white dark:bg-gray-900 border border-pink-50 dark:border-pink-950/20 rounded-lg p-6 flex flex-col justify-between transition-all duration-300 hover:border-pink-300 dark:hover:border-pink-800 hover:-translate-y-1 shadow-sm hover:shadow-md group cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-[#fafafc] dark:focus:ring-offset-[#080a12]"
+      className="relative overflow-hidden bg-white dark:bg-gray-900 border border-pink-50 dark:border-pink-950/20 rounded-lg p-6 flex flex-col justify-between transition-all duration-300 hover:border-pink-300 dark:hover:border-pink-800 hover:-translate-y-1 shadow-sm hover:shadow-md group cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-[#fafafc] dark:focus:ring-offset-[#080a12]"
     >
+      <div
+        className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg border border-pink-100/70 bg-white/80 text-pink-500 opacity-70 shadow-sm transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:border-pink-300 group-hover:bg-pink-50 group-hover:opacity-100 group-focus:translate-x-0.5 group-focus:-translate-y-0.5 group-focus:border-pink-300 group-focus:bg-pink-50 group-focus:opacity-100 dark:border-pink-900/40 dark:bg-gray-950/70 dark:text-pink-300 dark:group-hover:bg-pink-950/40 dark:group-focus:bg-pink-950/40"
+        aria-hidden="true"
+      >
+        <ArrowUpRight className="h-4 w-4" />
+      </div>
+
       <div className="space-y-4">
         {/* Profile Header */}
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-3 pr-10">
           <div className="space-y-1">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-tight group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
               {member.name}
@@ -46,11 +53,6 @@ export default function MemberCard({ member, onSelectMember, onViewProfile }: Me
         <p className="text-sm text-gray-600 dark:text-gray-300 font-light leading-relaxed">
           {member.bio}
         </p>
-
-        <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-pink-600 dark:text-pink-400">
-          <UserRound className="w-3.5 h-3.5" />
-          View complete profile
-        </div>
 
         {/* Research Interest Badges */}
         <div className="space-y-2">
