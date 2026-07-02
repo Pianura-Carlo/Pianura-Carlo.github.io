@@ -539,9 +539,6 @@ export default function App() {
           
           {/* Section Header */}
           <div className="space-y-4 max-w-3xl">
-            <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-pink-600 dark:text-pink-300 bg-pink-50 dark:bg-pink-950/30 px-2.5 py-1 rounded-full">
-              <BookOpen className="w-3.5 h-3.5" /> Publications Index
-            </div>
             <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white tracking-tight">
               Publications
             </h2>
