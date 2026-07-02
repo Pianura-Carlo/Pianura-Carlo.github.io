@@ -110,7 +110,7 @@ export default function ResearchPortal({ papers, isLoading, error }: ResearchPor
               key={paper.id}
               className={`rounded-lg border p-6 transition-all duration-300 group ${
                 paper.featured === true
-                  ? 'bg-pink-50/70 dark:bg-pink-950/20 border-pink-200/80 dark:border-pink-900/60 hover:border-pink-300 dark:hover:border-pink-800 hover:shadow-md hover:shadow-pink-600/10'
+                  ? 'bg-white/85 dark:bg-gray-950/65 border-pink-200/80 dark:border-pink-900/60 hover:border-pink-300 dark:hover:border-pink-800 hover:shadow-md hover:shadow-pink-600/10'
                   : 'bg-white dark:bg-gray-900 border-pink-50 dark:border-pink-950/30 hover:border-pink-200 dark:hover:border-pink-800/50 hover:shadow-md'
               }`}
             >

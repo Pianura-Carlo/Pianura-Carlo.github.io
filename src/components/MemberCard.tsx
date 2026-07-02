@@ -33,14 +33,10 @@ export default function MemberCard({ member, onViewProfile }: MemberCardProps) {
       aria-label={`View complete profile for ${member.name}`}
       className={`relative overflow-hidden rounded-lg border p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-md group cursor-pointer focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-[#fafafc] dark:focus:ring-offset-[#080a12] ${
         isFounder
-          ? 'border-pink-300 bg-pink-50/30 shadow-md shadow-pink-500/10 hover:border-pink-400 dark:border-pink-800/80 dark:bg-pink-950/15 dark:shadow-pink-950/20 dark:hover:border-pink-700'
+          ? 'border-pink-200 bg-white shadow-sm shadow-pink-500/5 hover:border-pink-300 dark:border-pink-900/50 dark:bg-gray-900 dark:shadow-pink-950/10 dark:hover:border-pink-800'
           : 'border-pink-50 bg-white shadow-sm hover:border-pink-300 dark:border-pink-950/20 dark:bg-gray-900 dark:hover:border-pink-800'
       }`}
     >
-      {isFounder && (
-        <div className="absolute inset-x-0 top-0 h-1 bg-pink-600 dark:bg-pink-500" aria-hidden="true" />
-      )}
-
       <div
         className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg border border-pink-100/70 bg-white/80 text-pink-500 opacity-70 shadow-sm transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:border-pink-300 group-hover:bg-pink-50 group-hover:opacity-100 group-focus:translate-x-0.5 group-focus:-translate-y-0.5 group-focus:border-pink-300 group-focus:bg-pink-50 group-focus:opacity-100 dark:border-pink-900/40 dark:bg-gray-950/70 dark:text-pink-300 dark:group-hover:bg-pink-950/40 dark:group-focus:bg-pink-950/40"
         aria-hidden="true"
@@ -51,19 +47,21 @@ export default function MemberCard({ member, onViewProfile }: MemberCardProps) {
       <div className="space-y-4">
         {/* Profile Header */}
         <div className="flex items-start gap-3 pr-10">
-          <div className="space-y-1">
-            {isFounder && (
-              <div className="inline-flex items-center gap-1 rounded-full border border-pink-200 bg-white/85 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-pink-600 shadow-sm shadow-pink-500/10 dark:border-pink-900/60 dark:bg-gray-950/70 dark:text-pink-300">
-                <Crown className="h-3 w-3" />
-                Founder
-              </div>
-            )}
+          <div className="space-y-1.5">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-tight group-hover:text-pink-600 dark:group-hover:text-pink-400 transition-colors">
               {member.name}
             </h3>
-            <p className="text-xs font-medium text-pink-600 dark:text-pink-400">
-              {displayRole || member.role}
-            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              {isFounder && (
+                <span className="inline-flex items-center gap-1 rounded-md border border-pink-100 bg-pink-50/70 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-pink-600 dark:border-pink-900/50 dark:bg-pink-950/25 dark:text-pink-300">
+                  <Crown className="h-3 w-3" />
+                  Founder
+                </span>
+              )}
+              <p className="text-xs font-medium text-pink-600 dark:text-pink-400">
+                {displayRole || member.role}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -91,7 +89,7 @@ export default function MemberCard({ member, onViewProfile }: MemberCardProps) {
       </div>
 
       {/* Socials Footer */}
-      <div className="mt-6 pt-4 border-t border-pink-50/50 dark:border-pink-950/10 flex flex-wrap items-center gap-2">
+      <div className="mt-5 pt-3 border-t border-pink-50/50 dark:border-pink-950/10 flex flex-wrap items-center gap-2">
         {/* Contacts */}
         <div className="flex flex-wrap items-center gap-2">
           {member.email && (
@@ -141,7 +139,7 @@ export default function MemberCard({ member, onViewProfile }: MemberCardProps) {
               title={`${member.name} on DBLP`}
               aria-label={`${member.name} on DBLP`}
             >
-              <span className="font-mono text-[8px] font-bold leading-none tracking-tight text-sky-700 dark:text-sky-300">
+              <span className="font-mono text-[8px] font-bold leading-none tracking-tight">
                 DBLP
               </span>
             </a>
@@ -156,7 +154,7 @@ export default function MemberCard({ member, onViewProfile }: MemberCardProps) {
               title={`${member.name} on ORCID`}
               aria-label={`${member.name} on ORCID`}
             >
-              <span className="text-[13px] font-bold leading-none text-[#A6CE39]">
+              <span className="text-[13px] font-bold leading-none">
                 iD
               </span>
             </a>
