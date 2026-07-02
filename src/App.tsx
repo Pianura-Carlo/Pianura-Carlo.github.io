@@ -3,10 +3,15 @@ import { MEMBERS } from './data';
 import OctahedronLogo from './components/OctahedronLogo';
 import MemberCard from './components/MemberCard';
 import ResearchPortal from './components/ResearchPortal';
+import { isLikelySameAuthor } from './paperCrawler';
+import { Member, Paper } from './types';
 import { 
   Sparkles, 
   BookOpen, 
   ArrowRight, 
+  AlertCircle,
+  Calendar,
+  FileText,
   Terminal,
   BrainCircuit,
   GraduationCap,
@@ -15,6 +20,7 @@ import {
   Github,
   Mail,
   ExternalLink,
+  RotateCw,
   X,
   UserRound
 } from 'lucide-react';
@@ -30,6 +36,11 @@ const PROFILE_FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
+interface PublicationSnapshot {
+  generatedAt: string;
+  publications: Paper[];
+}
+
 const getInitialTheme = (): Theme => {
   const storedTheme = window.localStorage.getItem('theme');
 
@@ -40,8 +51,137 @@ const getInitialTheme = (): Theme => {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 };
 
+const sortPapers = (papers: Paper[]) => [...papers].sort((a, b) =>
+  Number(b.featured === true) - Number(a.featured === true) ||
+  b.year - a.year ||
+  a.title.localeCompare(b.title)
+);
+
+const papersForMember = (papers: Paper[], member: Member) =>
+  sortPapers(
+    papers.filter((paper) =>
+      paper.authors.split(/,\s*/).some((author) => isLikelySameAuthor(author, member.name))
+    )
+  );
+
+function ProfilePublications({
+  member,
+  papers,
+  isLoading,
+  error,
+}: {
+  member: Member;
+  papers: Paper[];
+  isLoading: boolean;
+  error: string | null;
+}) {
+  const memberPapers = papersForMember(papers, member);
+
+  return (
+    <section className="space-y-4 border-t border-pink-100/60 pt-6 dark:border-pink-950/40">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h4 className="text-xs font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+          Publications
+        </h4>
+        {!isLoading && !error && (
+          <span className="rounded-full bg-pink-50 px-2.5 py-1 text-xs font-semibold text-pink-600 dark:bg-pink-950/30 dark:text-pink-300">
+            {memberPapers.length}
+          </span>
+        )}
+      </div>
+
+      {isLoading && (
+        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+          <RotateCw className="h-4 w-4 animate-spin text-pink-400" />
+          Loading publications
+        </div>
+      )}
+
+      {error && (
+        <div className="rounded-lg border border-red-100 bg-red-50 p-4 text-sm text-red-700 dark:border-red-950/50 dark:bg-red-950/20 dark:text-red-300">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>{error}</span>
+          </div>
+        </div>
+      )}
+
+      {!isLoading && !error && memberPapers.length > 0 && (
+        <div className="space-y-3">
+          {memberPapers.map((paper) => (
+            <article
+              key={paper.id}
+              className="rounded-lg border border-pink-100/70 bg-white/85 p-4 shadow-sm shadow-pink-500/5 dark:border-pink-950/40 dark:bg-gray-950/65"
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0 space-y-2">
+                  {paper.featured === true && (
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-pink-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white shadow-sm shadow-pink-700/10">
+                      <Sparkles className="h-3 w-3" />
+                      Featured
+                    </div>
+                  )}
+                  <h5 className="text-base font-semibold leading-snug text-gray-900 dark:text-white">
+                    {paper.title}
+                  </h5>
+                  <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+                    {paper.authors}
+                  </p>
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500 dark:text-gray-400">
+                    <span className="inline-flex items-center gap-1">
+                      <Calendar className="h-3.5 w-3.5 text-pink-400" />
+                      {paper.year}
+                    </span>
+                    <span className="inline-flex items-center gap-1">
+                      <BookOpen className="h-3.5 w-3.5 text-pink-400" />
+                      {paper.journal}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  {paper.doi && (
+                    <a
+                      href={paper.doi.startsWith('http') ? paper.doi : `https://doi.org/${paper.doi}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1 rounded-lg border border-pink-100 bg-pink-50 px-3 py-1.5 text-xs font-semibold text-pink-600 transition-colors hover:border-pink-300 hover:text-pink-700 dark:border-pink-900/50 dark:bg-pink-950/30 dark:text-pink-300 dark:hover:border-pink-800"
+                    >
+                      <ExternalLink className="h-3 w-3" />
+                      DOI
+                    </a>
+                  )}
+                  {paper.pdfUrl && (
+                    <a
+                      href={paper.pdfUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1 rounded-lg bg-pink-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm shadow-pink-600/10 transition-colors hover:bg-pink-700"
+                    >
+                      <FileText className="h-3 w-3" />
+                      Paper
+                    </a>
+                  )}
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      {!isLoading && !error && memberPapers.length === 0 && (
+        <div className="rounded-lg border border-dashed border-pink-200 bg-pink-50/20 p-4 text-sm text-gray-500 dark:border-pink-900/40 dark:bg-pink-950/10 dark:text-gray-400">
+          No publications are currently linked to this member.
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function App() {
-  const [selectedMemberId, setSelectedMemberId] = useState<string | undefined>(undefined);
+  const [papers, setPapers] = useState<Paper[]>([]);
+  const [isPublicationsLoading, setIsPublicationsLoading] = useState(false);
+  const [publicationsError, setPublicationsError] = useState<string | null>(null);
   const [profileMemberId, setProfileMemberId] = useState<string | undefined>(undefined);
   const [isProfileClosing, setIsProfileClosing] = useState(false);
   const [memberSearchQuery, setMemberSearchQuery] = useState('');
@@ -59,17 +199,47 @@ export default function App() {
     window.localStorage.setItem('theme', theme);
   }, [theme]);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPublications = async () => {
+      setIsPublicationsLoading(true);
+      setPublicationsError(null);
+
+      try {
+        const response = await fetch(`${import.meta.env.BASE_URL}publications.json`, { cache: 'no-cache' });
+
+        if (!response.ok) {
+          throw new Error(`${response.status} ${response.statusText}`);
+        }
+
+        const snapshot = await response.json() as PublicationSnapshot;
+
+        if (isMounted) {
+          setPapers(snapshot.publications || []);
+        }
+      } catch (e: unknown) {
+        if (isMounted) {
+          const message = e instanceof Error ? e.message : 'Unknown error';
+          setPublicationsError(`Unable to load publications: ${message}`);
+        }
+      } finally {
+        if (isMounted) {
+          setIsPublicationsLoading(false);
+        }
+      }
+    };
+
+    loadPublications();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   // Smooth scroll helper
   const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
     ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const handleSelectMemberForPapers = (memberId: string) => {
-    setSelectedMemberId(memberId);
-    // Smooth scroll to research portal
-    setTimeout(() => {
-      scrollTo(researchSectionRef);
-    }, 100);
   };
 
   const handleViewMemberProfile = (memberId: string) => {
@@ -82,10 +252,6 @@ export default function App() {
       : null;
     setIsProfileClosing(false);
     setProfileMemberId(memberId);
-  };
-
-  const handleClearMemberPaperFilter = () => {
-    setSelectedMemberId('all');
   };
 
   // Filter members based on search box (by name or interests)
@@ -206,10 +372,7 @@ export default function App() {
             About Us
           </button>
           <button 
-            onClick={() => {
-              setSelectedMemberId('all');
-              scrollTo(researchSectionRef);
-            }} 
+            onClick={() => scrollTo(researchSectionRef)}
             className="bg-pink-600 hover:bg-pink-700 text-white text-xs font-bold px-3 py-1.5 rounded-full transition-all transform active:scale-95 cursor-pointer shadow-sm shadow-pink-500/15 whitespace-nowrap"
           >
             Publications
@@ -260,10 +423,7 @@ export default function App() {
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
-              onClick={() => {
-                setSelectedMemberId('all');
-                scrollTo(researchSectionRef);
-              }}
+              onClick={() => scrollTo(researchSectionRef)}
               className="bg-white dark:bg-gray-900 hover:bg-pink-50 dark:hover:bg-pink-950/40 text-pink-600 dark:text-pink-300 border border-pink-200 dark:border-pink-900/60 rounded-lg py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 cursor-pointer"
             >
               View Publications
@@ -359,7 +519,6 @@ export default function App() {
                 <MemberCard 
                   key={member.id} 
                   member={member} 
-                  onSelectMember={handleSelectMemberForPapers} 
                   onViewProfile={handleViewMemberProfile}
                 />
               ))
@@ -447,21 +606,16 @@ export default function App() {
                     ))}
                   </div>
                 </div>
+
+                <ProfilePublications
+                  member={profileMember}
+                  papers={papers}
+                  isLoading={isPublicationsLoading}
+                  error={publicationsError}
+                />
               </div>
 
               <div className="profile-action-rail space-y-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setProfileMemberId(undefined);
-                    handleSelectMemberForPapers(profileMember.id);
-                  }}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pink-600 px-5 py-4 text-base font-semibold text-white shadow-sm shadow-pink-500/15 transition-colors hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-950"
-                >
-                  <BookOpen className="h-4 w-4" />
-                  View Publications
-                </button>
-
                 {profileMember.email && (
                   <a
                     href={`mailto:${profileMember.email}`}
@@ -505,7 +659,9 @@ export default function App() {
                     rel="noopener noreferrer"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300 dark:focus:ring-offset-gray-950"
                   >
-                    <BookOpen className="h-4 w-4" />
+                    <span className="font-mono text-[10px] font-bold leading-none tracking-tight text-sky-700 dark:text-sky-300">
+                      DBLP
+                    </span>
                     DBLP
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
@@ -518,7 +674,9 @@ export default function App() {
                     rel="noopener noreferrer"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300 dark:focus:ring-offset-gray-950"
                   >
-                    <UserRound className="h-4 w-4" />
+                    <span className="text-sm font-bold leading-none text-[#A6CE39]">
+                      iD
+                    </span>
                     ORCID
                     <ExternalLink className="h-3.5 w-3.5" />
                   </a>
@@ -545,7 +703,11 @@ export default function App() {
           </div>
 
           {/* Publications List Component */}
-          <ResearchPortal selectedMemberId={selectedMemberId} onClearMemberFilter={handleClearMemberPaperFilter} />
+          <ResearchPortal
+            papers={papers}
+            isLoading={isPublicationsLoading}
+            error={publicationsError}
+          />
 
         </div>
       </section>

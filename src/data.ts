@@ -41,7 +41,7 @@ export const MEMBERS: Member[] = [
   {
     id: 'francesco-damiano-di-gregorio',
     name: 'Francesco Damiano Di Gregorio',
-    role: 'Informatics Researcher',
+    role: 'Founder, Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet quam id dui posuere blandit. Proin eget tortor risus. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque.',
     github: 'nanonani',
     dblpPid: '433/5300',
