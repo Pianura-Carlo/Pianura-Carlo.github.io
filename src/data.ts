@@ -64,7 +64,7 @@ export const MEMBERS: Member[] = [
     name: 'Stefano Labianca',
     role: 'Informatics Researcher',
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ultricies ligula sed magna dictum porta. Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem.',
-    github: 'stefanolabianca',
+    github: 'arci-arci',
     dblpPid: '437/6235',
     orcid: '0009-0002-9280-4446',
     googleScholarId: 'hEsbpU4AAAAJ',
