@@ -21,6 +21,15 @@ import {
 
 type Theme = 'light' | 'dark';
 
+const PROFILE_FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
 const getInitialTheme = (): Theme => {
   const storedTheme = window.localStorage.getItem('theme');
 
@@ -40,7 +49,10 @@ export default function App() {
   
   const membersSectionRef = useRef<HTMLDivElement>(null);
   const researchSectionRef = useRef<HTMLDivElement>(null);
+  const profileModalRef = useRef<HTMLDivElement>(null);
+  const profileCloseButtonRef = useRef<HTMLButtonElement>(null);
   const profileCloseTimeoutRef = useRef<number | null>(null);
+  const previousActiveElementRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -65,6 +77,9 @@ export default function App() {
       window.clearTimeout(profileCloseTimeoutRef.current);
       profileCloseTimeoutRef.current = null;
     }
+    previousActiveElementRef.current = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null;
     setIsProfileClosing(false);
     setProfileMemberId(memberId);
   };
@@ -112,15 +127,54 @@ export default function App() {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         closeProfile();
+        return;
+      }
+
+      if (event.key !== 'Tab') {
+        return;
+      }
+
+      const focusableElements = Array.from<HTMLElement>(
+        profileModalRef.current?.querySelectorAll<HTMLElement>(PROFILE_FOCUSABLE_SELECTOR) ?? []
+      ).filter((element) => (
+        !element.hasAttribute('disabled') &&
+        element.getAttribute('aria-hidden') !== 'true'
+      ));
+
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+      const activeElement = document.activeElement;
+
+      if (event.shiftKey) {
+        if (activeElement === firstElement || !profileModalRef.current?.contains(activeElement)) {
+          event.preventDefault();
+          lastElement.focus();
+        }
+        return;
+      }
+
+      if (activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
       }
     };
 
     document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', handleKeyDown);
+    const focusFrame = window.requestAnimationFrame(() => {
+      profileCloseButtonRef.current?.focus();
+    });
 
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       document.body.style.overflow = '';
       window.removeEventListener('keydown', handleKeyDown);
+      previousActiveElementRef.current?.focus();
     };
   }, [closeProfile, profileMember]);
 
@@ -200,7 +254,7 @@ export default function App() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <button
               onClick={() => scrollTo(membersSectionRef)}
-              className="bg-pink-600 hover:bg-pink-700 text-white rounded-full py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 shadow-md shadow-pink-500/10 cursor-pointer"
+              className="bg-pink-600 hover:bg-pink-700 text-white rounded-lg py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 shadow-md shadow-pink-500/10 cursor-pointer"
             >
               Explore Members
               <ArrowRight className="w-4 h-4" />
@@ -210,7 +264,7 @@ export default function App() {
                 setSelectedMemberId('all');
                 scrollTo(researchSectionRef);
               }}
-              className="bg-white dark:bg-gray-900 hover:bg-pink-50 dark:hover:bg-pink-950/40 text-pink-600 dark:text-pink-300 border border-pink-200 dark:border-pink-900/60 rounded-full py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 cursor-pointer"
+              className="bg-white dark:bg-gray-900 hover:bg-pink-50 dark:hover:bg-pink-950/40 text-pink-600 dark:text-pink-300 border border-pink-200 dark:border-pink-900/60 rounded-lg py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 cursor-pointer"
             >
               View Publications
             </button>
@@ -218,7 +272,7 @@ export default function App() {
               href="https://github.com/Pianura-Carlo"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-950 hover:bg-gray-800 dark:bg-white dark:hover:bg-pink-50 text-white dark:text-gray-950 rounded-full py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 shadow-md shadow-gray-900/10 dark:shadow-pink-500/10"
+              className="bg-gray-950 hover:bg-gray-800 dark:bg-white dark:hover:bg-pink-50 text-white dark:text-gray-950 rounded-lg py-3 px-6 text-sm font-semibold transition-all transform active:scale-95 flex items-center gap-2 shadow-md shadow-gray-900/10 dark:shadow-pink-500/10"
             >
               <Github className="w-4 h-4" />
               GitHub Org
@@ -238,8 +292,8 @@ export default function App() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Focus 1 */}
-            <div className="bg-[#fafafc] dark:bg-gray-900 border border-pink-100/50 dark:border-pink-950/40 rounded-2xl p-6 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-600 dark:text-pink-300">
+            <div className="bg-[#fafafc] dark:bg-gray-900 border border-pink-100/50 dark:border-pink-950/40 rounded-lg p-6 space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-600 dark:text-pink-300">
                 <BrainCircuit className="w-5 h-5" />
               </div>
               <h3 className="text-md font-semibold text-gray-900 dark:text-white">Theoretical Foundations</h3>
@@ -249,8 +303,8 @@ export default function App() {
             </div>
 
             {/* Focus 2 */}
-            <div className="bg-[#fafafc] dark:bg-gray-900 border border-pink-100/50 dark:border-pink-950/40 rounded-2xl p-6 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-600 dark:text-pink-300">
+            <div className="bg-[#fafafc] dark:bg-gray-900 border border-pink-100/50 dark:border-pink-950/40 rounded-lg p-6 space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-600 dark:text-pink-300">
                 <Terminal className="w-5 h-5" />
               </div>
               <h3 className="text-md font-semibold text-gray-900 dark:text-white">Competitive Programming</h3>
@@ -260,8 +314,8 @@ export default function App() {
             </div>
 
             {/* Focus 3 */}
-            <div className="bg-[#fafafc] dark:bg-gray-900 border border-pink-100/50 dark:border-pink-950/40 rounded-2xl p-6 space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-600 dark:text-pink-300">
+            <div className="bg-[#fafafc] dark:bg-gray-900 border border-pink-100/50 dark:border-pink-950/40 rounded-lg p-6 space-y-3">
+              <div className="w-10 h-10 rounded-lg bg-pink-50 dark:bg-pink-950/40 flex items-center justify-center text-pink-600 dark:text-pink-300">
                 <GraduationCap className="w-5 h-5" />
               </div>
               <h3 className="text-md font-semibold text-gray-900 dark:text-white">Research Practice</h3>
@@ -293,7 +347,7 @@ export default function App() {
                 placeholder="Filter members by name or research tag..."
                 value={memberSearchQuery}
                 onChange={(e) => setMemberSearchQuery(e.target.value)}
-                className="w-full bg-white dark:bg-gray-900 border border-pink-100 dark:border-pink-950/40 rounded-2xl py-3.5 px-5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full bg-white dark:bg-gray-900 border border-pink-100 dark:border-pink-950/40 rounded-lg py-3.5 px-5 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
             </div>
           </div>
@@ -310,7 +364,7 @@ export default function App() {
                 />
               ))
             ) : (
-              <div className="col-span-full text-center py-12 bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-pink-200 dark:border-pink-900/40">
+              <div className="col-span-full text-center py-12 bg-white dark:bg-gray-900 rounded-lg border border-dashed border-pink-200 dark:border-pink-900/40">
                 <p className="text-sm text-gray-500 dark:text-gray-400">No members match your filter criteria.</p>
               </div>
             )}
@@ -329,6 +383,7 @@ export default function App() {
           aria-labelledby="member-profile-title"
         >
           <div
+            ref={profileModalRef}
             className="profile-modal-surface relative h-screen w-full overflow-y-auto bg-white p-6 dark:bg-gray-950 md:p-12 lg:p-16 xl:p-24"
           >
             <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
@@ -348,13 +403,9 @@ export default function App() {
 
             <button
               type="button"
-              onPointerDown={(event) => {
-                if (event.pointerType !== 'mouse' || event.button === 0) {
-                  closeProfile();
-                }
-              }}
+              ref={profileCloseButtonRef}
               onClick={closeProfile}
-              className="profile-close-button fixed right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-pink-100 bg-white text-gray-500 shadow-sm transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+              className="profile-close-button fixed right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-pink-100 bg-white text-gray-500 shadow-sm transition-colors hover:bg-pink-50 hover:text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:border-pink-900/50 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300 dark:focus:ring-offset-gray-950"
               aria-label="Close profile"
             >
               <X className="h-4 w-4" />
@@ -389,7 +440,7 @@ export default function App() {
                     {profileMember.researchInterests.map((interest) => (
                       <span
                         key={interest}
-                        className="rounded-xl border border-pink-100/60 bg-pink-50/70 px-4 py-2 text-sm text-pink-700 dark:border-pink-900/40 dark:bg-pink-950/30 dark:text-pink-300 md:text-base"
+                        className="rounded-lg border border-pink-100/60 bg-pink-50/70 px-4 py-2 text-sm text-pink-700 dark:border-pink-900/40 dark:bg-pink-950/30 dark:text-pink-300 md:text-base"
                       >
                         {interest}
                       </span>
@@ -405,7 +456,7 @@ export default function App() {
                     setProfileMemberId(undefined);
                     handleSelectMemberForPapers(profileMember.id);
                   }}
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-pink-600 px-5 py-4 text-base font-semibold text-white shadow-sm shadow-pink-500/15 transition-colors hover:bg-pink-700"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-pink-600 px-5 py-4 text-base font-semibold text-white shadow-sm shadow-pink-500/15 transition-colors hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-gray-950"
                 >
                   <BookOpen className="h-4 w-4" />
                   View Publications
@@ -414,7 +465,7 @@ export default function App() {
                 {profileMember.email && (
                   <a
                     href={`mailto:${profileMember.email}`}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300 dark:focus:ring-offset-gray-950"
                   >
                     <Mail className="h-4 w-4" />
                     Email
@@ -426,7 +477,7 @@ export default function App() {
                     href={`https://github.com/${profileMember.github}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300 dark:focus:ring-offset-gray-950"
                   >
                     <Github className="h-4 w-4" />
                     GitHub
@@ -439,7 +490,7 @@ export default function App() {
                     href={`https://scholar.google.com/citations?user=${profileMember.googleScholarId}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300 dark:focus:ring-offset-gray-950"
                   >
                     <GraduationCap className="h-4 w-4" />
                     Scholar
@@ -452,7 +503,7 @@ export default function App() {
                     href={`https://dblp.org/pid/${profileMember.dblpPid}.html`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300 dark:focus:ring-offset-gray-950"
                   >
                     <BookOpen className="h-4 w-4" />
                     DBLP
@@ -465,7 +516,7 @@ export default function App() {
                     href={`https://orcid.org/${profileMember.orcid}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-pink-100 bg-white px-5 py-4 text-base font-semibold text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 focus:ring-offset-white dark:border-pink-900/50 dark:bg-gray-950 dark:text-gray-300 dark:hover:bg-pink-950/30 dark:hover:text-pink-300 dark:focus:ring-offset-gray-950"
                   >
                     <UserRound className="h-4 w-4" />
                     ORCID

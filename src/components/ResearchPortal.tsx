@@ -115,7 +115,7 @@ export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }
 
       {/* error state */}
       {error && (
-        <div className="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-950/50 rounded-xl p-4 mb-6 flex items-start gap-3">
+        <div className="bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-950/50 rounded-lg p-4 mb-6 flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
           <div>
             <h4 className="text-sm font-semibold text-red-800 dark:text-red-300">Publications Unavailable</h4>
@@ -130,7 +130,7 @@ export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }
           {sortedVisiblePapers.map((paper) => (
             <div
               key={paper.id}
-              className={`rounded-2xl border p-6 transition-all duration-300 group ${
+              className={`rounded-lg border p-6 transition-all duration-300 group ${
                 paper.featured === true
                   ? 'bg-pink-50/70 dark:bg-pink-950/20 border-pink-200/80 dark:border-pink-900/60 hover:border-pink-300 dark:hover:border-pink-800 hover:shadow-md hover:shadow-pink-600/10'
                   : 'bg-white dark:bg-gray-900 border-pink-50 dark:border-pink-950/30 hover:border-pink-200 dark:hover:border-pink-800/50 hover:shadow-md'
@@ -175,7 +175,7 @@ export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }
                       href={paper.doi.startsWith('http') ? paper.doi : `https://doi.org/${paper.doi}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-pink-600 dark:text-pink-400 hover:text-pink-700 bg-pink-50 dark:bg-pink-950/30 border border-pink-100 dark:border-pink-900/50 px-3 py-1.5 rounded-xl flex items-center justify-center gap-1 font-semibold transition-all"
+                      className="text-xs text-pink-600 dark:text-pink-400 hover:text-pink-700 bg-pink-50 dark:bg-pink-950/30 border border-pink-100 dark:border-pink-900/50 px-3 py-1.5 rounded-lg flex items-center justify-center gap-1 font-semibold transition-all"
                     >
                       <ExternalLink className="w-3 h-3" />
                       DOI Link
@@ -186,7 +186,7 @@ export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }
                       href={paper.pdfUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-xs text-white bg-pink-600 hover:bg-pink-700 px-3 py-1.5 rounded-xl flex items-center justify-center gap-1 font-semibold shadow-sm transition-all shadow-pink-600/10"
+                      className="text-xs text-white bg-pink-600 hover:bg-pink-700 px-3 py-1.5 rounded-lg flex items-center justify-center gap-1 font-semibold shadow-sm transition-all shadow-pink-600/10"
                     >
                       <FileText className="w-3 h-3" />
                       View Paper
@@ -201,7 +201,7 @@ export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }
       )}
 
       {visiblePapers.length === 0 && (
-        <div className="text-center py-16 bg-pink-50/10 dark:bg-pink-950/5 border border-dashed border-pink-200 dark:border-pink-900/30 rounded-2xl">
+        <div className="text-center py-16 bg-pink-50/10 dark:bg-pink-950/5 border border-dashed border-pink-200 dark:border-pink-900/30 rounded-lg">
           <BookOpen className="w-8 h-8 text-pink-300 mx-auto mb-3" />
           <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200">No Publications Available</h4>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 max-w-sm mx-auto">

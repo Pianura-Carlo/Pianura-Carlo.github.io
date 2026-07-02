@@ -98,6 +98,7 @@ export default function OctahedronLogo() {
   const [isHovered, setIsHovered] = useState(false);
   const rotationRef = useRef(INITIAL_ROTATION);
   const velocityXRef = useRef(0.42);
+  const velocityYRef = useRef(0);
   const previousPointerRef = useRef({ x: 0, y: 0, time: 0 });
   const isDraggingRef = useRef(false);
   const isHoveredRef = useRef(false);
@@ -118,11 +119,28 @@ export default function OctahedronLogo() {
         const targetVelocity = isHoveredRef.current ? 0.18 : 0.38;
         const blend = 1 - Math.exp(-deltaSeconds * 2.4);
         const idleYaw = INITIAL_ROTATION.y + Math.sin(time * 0.00055) * 0.06;
+        const yawWithInertia = rotationRef.current.y + velocityYRef.current * deltaSeconds;
+        const yawVelocityDecay = Math.exp(-deltaSeconds * 4.2);
+        const settleBlend = Math.abs(velocityYRef.current) > 0.04
+          ? 1 - Math.exp(-deltaSeconds * 0.7)
+          : blend;
 
         velocityXRef.current += (targetVelocity - velocityXRef.current) * blend;
+        velocityYRef.current *= yawVelocityDecay;
+
+        const nextY = clamp(
+          yawWithInertia + (idleYaw - yawWithInertia) * settleBlend,
+          -0.72,
+          0.72
+        );
+
+        if (nextY === -0.72 || nextY === 0.72) {
+          velocityYRef.current = 0;
+        }
+
         rotationRef.current = {
           x: (rotationRef.current.x + velocityXRef.current * deltaSeconds) % TWO_PI,
-          y: rotationRef.current.y + (idleYaw - rotationRef.current.y) * blend,
+          y: nextY,
         };
         setRotation(rotationRef.current);
       }
@@ -141,6 +159,7 @@ export default function OctahedronLogo() {
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     isDraggingRef.current = true;
+    velocityYRef.current = 0;
     previousPointerRef.current = {
       x: event.clientX,
       y: event.clientY,
@@ -161,6 +180,7 @@ export default function OctahedronLogo() {
     const deltaSeconds = Math.max((currentTime - previousPointer.time) / 1000, 0.016);
 
     velocityXRef.current = clamp((-deltaY * 0.012) / deltaSeconds, -2.4, 2.4);
+    velocityYRef.current = clamp((-deltaX * 0.006) / deltaSeconds, -1.8, 1.8);
     rotationRef.current = {
       x: (rotationRef.current.x - deltaY * 0.012) % TWO_PI,
       y: clamp(rotationRef.current.y - deltaX * 0.006, -0.72, 0.72),
