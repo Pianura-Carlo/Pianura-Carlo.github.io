@@ -160,10 +160,10 @@ export default function OctahedronLogo() {
     const deltaY = event.clientY - previousPointer.y;
     const deltaSeconds = Math.max((currentTime - previousPointer.time) / 1000, 0.016);
 
-    velocityXRef.current = clamp((deltaY * 0.012) / deltaSeconds, -2.4, 2.4);
+    velocityXRef.current = clamp((-deltaY * 0.012) / deltaSeconds, -2.4, 2.4);
     rotationRef.current = {
-      x: (rotationRef.current.x + deltaY * 0.012) % TWO_PI,
-      y: clamp(rotationRef.current.y + deltaX * 0.006, -0.72, 0.72),
+      x: (rotationRef.current.x - deltaY * 0.012) % TWO_PI,
+      y: clamp(rotationRef.current.y - deltaX * 0.006, -0.72, 0.72),
     };
     previousPointerRef.current = {
       x: event.clientX,

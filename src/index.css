@@ -284,7 +284,7 @@ body {
 
 @keyframes profile-octa-drift {
   from {
-    transform: translate(-50%, -50%) rotateZ(-2deg) scale(1);
+    transform: translate(-50%, -50%) rotateZ(0deg) scale(1);
   }
   to {
     transform: translate(-50%, -50%) rotateZ(3deg) scale(1.03);

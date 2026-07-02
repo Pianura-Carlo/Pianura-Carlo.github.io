@@ -69,15 +69,18 @@ export default function ResearchPortal({ selectedMemberId, onClearMemberFilter }
     Number(b.featured === true) - Number(a.featured === true)
   );
 
-  // Helper to highlight member names in the authors list
   const highlightGroupMembers = (authorsStr: string) => {
     const parts = authorsStr.split(/,\s*/);
     return parts.map((author, index) => {
       const isGroupMember = MEMBERS.some(m => isLikelySameAuthor(author, m.name));
       return (
-        <span key={index} className={isGroupMember ? 'font-semibold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-950/40 px-1.5 py-0.5 rounded' : 'text-gray-600 dark:text-gray-400'}>
-          {author}
-          {index < parts.length - 1 ? ', ' : ''}
+        <span key={index} className="inline-flex items-baseline">
+          <span className={isGroupMember ? 'font-semibold text-pink-600 dark:text-pink-400 bg-pink-50 dark:bg-pink-950/40 px-1.5 py-0.5 rounded' : 'text-gray-600 dark:text-gray-400'}>
+            {author}
+          </span>
+          {index < parts.length - 1 && (
+            <span className={`${isGroupMember ? '-ml-0.5' : ''} text-gray-600 dark:text-gray-400`}>,</span>
+          )}
         </span>
       );
     });
